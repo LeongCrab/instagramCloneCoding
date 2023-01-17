@@ -32,7 +32,8 @@ public class PostUserReq {
     @NotBlank(message = "Insert birthday")
     @Pattern(regexp = "\\d{4}-(0[1-9]|1[012])-([012][0-9]|3[01])", message= "Wrong Date Format")
     private String birthday; //'YYYY-MM-DD'
-    //가입 시 자동으로 개인 정보 만료 시각 1년
+
+    //가입 시 자동으로 개인 정보 만료 날짜 1년 추가
     private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
 
     protected UserType userType;
