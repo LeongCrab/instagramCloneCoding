@@ -35,7 +35,7 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserType userType;
+    private UserType userType = UserType.ORIGINAL;
 
     @Builder
     public User(Long id, String phone, String name, String userId, String password, LocalDate birthday, UserType userType) {

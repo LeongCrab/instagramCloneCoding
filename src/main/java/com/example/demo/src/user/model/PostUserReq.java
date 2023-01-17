@@ -33,7 +33,6 @@ public class PostUserReq {
     @Pattern(regexp = "\\d{4}-(0[1-9]|1[012])-([012][0-9]|3[01])", message= "Wrong Date Format")
     private String birthday; //'YYYY-MM-DD'
 
-    //@NotBlank(message = "Insert user type")
     protected UserType userType;
 
     public User toEntity() {

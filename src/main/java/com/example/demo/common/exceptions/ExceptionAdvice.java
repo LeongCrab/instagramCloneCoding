@@ -25,12 +25,12 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public BaseResponse<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
+    public BaseResponse<BaseResponseStatus> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
         String errorMessage = exception.getBindingResult()
                 .getAllErrors()
                 .get(0)
                 .getDefaultMessage();
         log.error("Not Valid Exception. ", errorMessage);
-        return new BaseResponse<>((exception.getMessage()));
+        return new BaseResponse<>(BaseResponseStatus.VALIDATION_ERROR, errorMessage);
     }
 }

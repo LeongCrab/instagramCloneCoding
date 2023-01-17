@@ -30,4 +30,5 @@ public class BaseEntity {
     public enum State {
         ACTIVE, INACTIVE, DELETED, BANNED
     }
+
 }

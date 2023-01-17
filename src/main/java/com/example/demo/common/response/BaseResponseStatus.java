@@ -18,10 +18,10 @@ public enum BaseResponseStatus {
      * 400 : Request, Response 오류
      */
 
-    USERS_EMPTY_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "이메일을 입력해주세요."),
     TEST_EMPTY_COMMENT(false, HttpStatus.BAD_REQUEST.value(), "코멘트를 입력해주세요."),
     POST_USERS_EXISTS_USERID(false,HttpStatus.BAD_REQUEST.value(),"중복된 아이디입니다."),
     POST_TEST_EXISTS_MEMO(false,HttpStatus.BAD_REQUEST.value(),"중복된 메모입니다."),
+    VALIDATION_ERROR(false, HttpStatus.BAD_REQUEST.value(), ""),
 
     RESPONSE_ERROR(false, HttpStatus.NOT_FOUND.value(), "값을 불러오는데 실패하였습니다."),
 

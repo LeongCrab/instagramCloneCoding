@@ -4,4 +4,4 @@ logs/
 .idea/
 out/
 
-secret.java
+.yml

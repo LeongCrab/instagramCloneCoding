@@ -26,8 +26,15 @@ public class BaseResponse<T> {
         this.code = SUCCESS.getCode();
         this.result = result;
     }
-
     // 요청에 실패한 경우
+    //오버로딩을 통해 에러 메시지를 담음
+    public BaseResponse(BaseResponseStatus status, String message) {
+        this.isSuccess = status.isSuccess();
+        this.message = message;
+        this.code = status.getCode();
+    }
+
+
     public BaseResponse(BaseResponseStatus status) {
         this.isSuccess = status.isSuccess();
         this.message = status.getMessage();
