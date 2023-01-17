@@ -23,10 +23,10 @@ public class GoogleUser {
 
     public User toEntity() {
         return User.builder()
-                .email(this.email)
+                .userId(this.email)
                 .password("NONE")
                 .name(this.name)
-                .isOAuth(true)
+                .userType(User.UserType.GOOGLE)
                 .build();
     }
 }

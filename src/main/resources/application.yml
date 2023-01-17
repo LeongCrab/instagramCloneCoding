@@ -14,7 +14,7 @@ spring:
     init:
       platform: mysql
   datasource:
-    url: jdbc:mysql://rds-database.cmfk1nseadlr.ap-northeast-2.rds.amazonaws.com/gridge_test?autoReconnect=true&setTimezone=Asia/Seoul # 변경해주세요
+    url: jdbc:mysql://rds-database.cmfk1nseadlr.ap-northeast-2.rds.amazonaws.com/gridgeTest?autoReconnect=true&setTimezone=Asia/Seoul # 변경해주세요
     username: admin # username
     password: fjdrp8493! # password
     driver-class-name: com.mysql.cj.jdbc.Driver # mysql 8버전
@@ -47,7 +47,7 @@ springdoc:
     - /**
 
 jwt:
-  secret-key: UwKYibQQgkW7g-*k.ap9kje-wxBHb9wdXoBT4vnt4P3sJWt-Nu  # JWT key. 수정해주세요
+  secret-key: jwtkey  # JWT key. 수정해주세요
 
 ---
 spring:

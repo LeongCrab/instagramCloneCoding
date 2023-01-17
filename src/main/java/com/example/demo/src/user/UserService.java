@@ -2,7 +2,6 @@ package com.example.demo.src.user;
 
 
 
-import com.example.demo.common.entity.BaseEntity.State;
 import com.example.demo.common.exceptions.BaseException;
 import com.example.demo.src.user.entity.User;
 import com.example.demo.src.user.model.*;
@@ -32,9 +31,9 @@ public class UserService {
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
-        Optional<User> checkUser = userRepository.findByEmailAndState(postUserReq.getEmail(), ACTIVE);
+        Optional<User> checkUser = userRepository.findByUserIdAndState(postUserReq.getUserId(), ACTIVE);
         if(checkUser.isPresent() == true){
-            throw new BaseException(POST_USERS_EXISTS_EMAIL);
+            throw new BaseException(POST_USERS_EXISTS_USERID);
         }
 
         String encryptPwd;
@@ -80,8 +79,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetUserRes> getUsersByEmail(String email) {
-        List<GetUserRes> getUserResList = userRepository.findAllByEmailAndState(email, ACTIVE).stream()
+    public List<GetUserRes> getUsersByUserId(String userId) {
+        List<GetUserRes> getUserResList = userRepository.findAllByUserIdAndState(userId, ACTIVE).stream()
                 .map(GetUserRes::new)
                 .collect(Collectors.toList());
         return getUserResList;
@@ -96,14 +95,14 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public boolean checkUserByEmail(String email) {
-        Optional<User> result = userRepository.findByEmailAndState(email, ACTIVE);
+    public boolean checkUserByEmail(String userId) {
+        Optional<User> result = userRepository.findByUserIdAndState(userId, ACTIVE);
         if (result.isPresent()) return true;
         return false;
     }
 
     public PostLoginRes logIn(PostLoginReq postLoginReq) {
-        User user = userRepository.findByEmailAndState(postLoginReq.getEmail(), ACTIVE)
+        User user = userRepository.findByUserIdAndState(postLoginReq.getUserId(), ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
 
         String encryptPwd;
@@ -123,8 +122,8 @@ public class UserService {
 
     }
 
-    public GetUserRes getUserByEmail(String email) {
-        User user = userRepository.findByEmailAndState(email, ACTIVE).orElseThrow(() -> new BaseException(NOT_FIND_USER));
+    public GetUserRes getUserByEmail(String userId) {
+        User user = userRepository.findByUserIdAndState(userId, ACTIVE).orElseThrow(() -> new BaseException(NOT_FIND_USER));
         return new GetUserRes(user);
     }
 }

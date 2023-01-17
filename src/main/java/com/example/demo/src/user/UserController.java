@@ -11,6 +11,7 @@ import com.example.demo.src.user.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
@@ -40,15 +41,7 @@ public class UserController {
     // Body
     @ResponseBody
     @PostMapping("")
-    public BaseResponse<PostUserRes> createUser(@RequestBody PostUserReq postUserReq) {
-        // TODO: email 관련한 짧은 validation 예시입니다. 그 외 더 부가적으로 추가해주세요!
-        if(postUserReq.getEmail() == null){
-            return new BaseResponse<>(USERS_EMPTY_EMAIL);
-        }
-        //이메일 정규표현
-        if(!isRegexEmail(postUserReq.getEmail())){
-            return new BaseResponse<>(POST_USERS_INVALID_EMAIL);
-        }
+    public BaseResponse<PostUserRes> createUser(@Valid @RequestBody PostUserReq postUserReq) {
         PostUserRes postUserRes = userService.createUser(postUserReq);
         return new BaseResponse<>(postUserRes);
     }
@@ -57,19 +50,19 @@ public class UserController {
      * 회원 조회 API
      * [GET] /users
      * 회원 번호 및 이메일 검색 조회 API
-     * [GET] /app/users? Email=
+     * [GET] /app/users? UserId=
      * @return BaseResponse<List<GetUserRes>>
      */
     //Query String
     @ResponseBody
     @GetMapping("") // (GET) 127.0.0.1:9000/app/users
-    public BaseResponse<List<GetUserRes>> getUsers(@RequestParam(required = false) String Email) {
-        if(Email == null){
+    public BaseResponse<List<GetUserRes>> getUsers(@RequestParam(required = false) String userId) {
+        if(userId == null){
             List<GetUserRes> getUsersRes = userService.getUsers();
             return new BaseResponse<>(getUsersRes);
         }
         // Get Users
-        List<GetUserRes> getUsersRes = userService.getUsersByEmail(Email);
+        List<GetUserRes> getUsersRes = userService.getUsersByUserId(userId);
         return new BaseResponse<>(getUsersRes);
     }
 

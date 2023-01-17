@@ -3,6 +3,7 @@ package com.example.demo.common.exceptions;
 import com.example.demo.common.response.BaseResponse;
 import com.example.demo.common.response.BaseResponseStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -19,7 +20,17 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(Exception.class)
     public BaseResponse<BaseResponseStatus> ExceptionHandle(Exception exception) {
-        log.error("Exception has occured. ", exception);
+        log.error("Exception has occurred. ", exception);
         return new BaseResponse<>(BaseResponseStatus.UNEXPECTED_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public BaseResponse<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
+        String errorMessage = exception.getBindingResult()
+                .getAllErrors()
+                .get(0)
+                .getDefaultMessage();
+        log.error("Not Valid Exception. ", errorMessage);
+        return new BaseResponse<>((exception.getMessage()));
     }
 }

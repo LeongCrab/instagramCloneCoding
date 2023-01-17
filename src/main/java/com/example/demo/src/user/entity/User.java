@@ -4,6 +4,7 @@ import com.example.demo.common.entity.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
@@ -17,25 +18,37 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 100)
-    private String email;
+    @Column(nullable = false, length = 20)
+    private String phone;
+
+    @Column(nullable = false, length = 20)
+    private String name;
+
+    @Column(nullable = false, length = 20)
+    private String userId;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false, length = 30)
-    private String name;
+    @Column(nullable = false)
+    private LocalDate birthday;
 
     @Column(nullable = false)
-    private boolean isOAuth;
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     @Builder
-    public User(Long id, String email, String password, String name, boolean isOAuth) {
+    public User(Long id, String phone, String name, String userId, String password, LocalDate birthday, UserType userType) {
         this.id = id;
-        this.email = email;
-        this.password = password;
+        this.phone = phone;
         this.name = name;
-        this.isOAuth = isOAuth;
+        this.userId = userId;
+        this.password = password;
+        this.birthday = birthday;
+        this.userType = userType;
+    }
+    public enum UserType {
+            ORIGINAL, KAKAO, NAVER, GOOGLE, APPLE
     }
 
     public void updateName(String name) {
