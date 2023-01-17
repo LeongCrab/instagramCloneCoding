@@ -2,9 +2,11 @@ package com.example.demo.src.user.entity;
 
 import com.example.demo.common.entity.BaseEntity;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
@@ -18,27 +20,30 @@ public class User extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String userId;
 
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
-    private LocalDate birthday;
+    private String birthday;
+    @CreationTimestamp
+    @Column(nullable = false)
+    private LocalDate privacy;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserType userType = UserType.ORIGINAL;
 
     @Builder
-    public User(Long id, String phone, String name, String userId, String password, LocalDate birthday, UserType userType) {
+    public User(Long id, String phone, String name, String userId, String password, String birthday, UserType userType) {
         this.id = id;
         this.phone = phone;
         this.name = name;
@@ -50,6 +55,7 @@ public class User extends BaseEntity {
     public enum UserType {
             ORIGINAL, KAKAO, NAVER, GOOGLE, APPLE
     }
+
 
     public void updateName(String name) {
         this.name = name;

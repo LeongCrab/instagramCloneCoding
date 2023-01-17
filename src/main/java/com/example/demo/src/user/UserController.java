@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.util.List;
 
 
-import static com.example.demo.common.response.BaseResponseStatus.*;
-import static com.example.demo.utils.ValidationRegex.isRegexEmail;
-
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -49,7 +46,7 @@ public class UserController {
     /**
      * 회원 조회 API
      * [GET] /users
-     * 회원 번호 및 이메일 검색 조회 API
+     * 회원 번호 및 아이디 검색 조회 API
      * [GET] /app/users? UserId=
      * @return BaseResponse<List<GetUserRes>>
      */

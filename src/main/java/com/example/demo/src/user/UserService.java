@@ -35,7 +35,23 @@ public class UserService {
         if(checkUser.isPresent() == true){
             throw new BaseException(POST_USERS_EXISTS_USERID);
         }
-
+        //휴대폰 번호 암호화
+        String encryptPhone;
+        try {
+            encryptPhone = new SHA256().encrypt(postUserReq.getPhone());
+            postUserReq.setPhone(encryptPhone);
+        } catch (Exception exception) {
+            throw new BaseException(PHONE_ENCRYPTION_ERROR);
+        }
+        //이름 암호화
+        String encryptName;
+        try {
+            encryptName = new SHA256().encrypt(postUserReq.getName());
+            postUserReq.setName(encryptName);
+        } catch (Exception exception) {
+            throw new BaseException(NAME_ENCRYPTION_ERROR);
+        }
+        //비밀번호 암호화
         String encryptPwd;
         try {
             encryptPwd = new SHA256().encrypt(postUserReq.getPassword());
@@ -43,8 +59,19 @@ public class UserService {
         } catch (Exception exception) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
+        //생일 암호화
+        String encryptBirthday;
+        try {
+            encryptBirthday = new SHA256().encrypt(postUserReq.getBirthday());
+            postUserReq.setBirthday(encryptBirthday);
+        } catch (Exception exception) {
+            throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
+        }
 
         User saveUser = userRepository.save(postUserReq.toEntity());
+
+        //String jwtToken = jwtService.createJwt(saveUser.getId());
+        //return new PostUserRes(saveUser.getId(), jwtToken);
         return new PostUserRes(saveUser.getId());
 
     }

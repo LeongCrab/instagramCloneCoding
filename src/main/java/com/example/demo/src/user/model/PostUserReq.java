@@ -7,7 +7,6 @@ import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
 
 @Getter
 @Setter
@@ -41,7 +40,7 @@ public class PostUserReq {
                 .name(this.name)
                 .userId(this.userId)
                 .password(this.password)
-                .birthday(LocalDate.parse(this.birthday))
+                .birthday(this.birthday)
                 .userType(this.userType)
                 .build();
     }

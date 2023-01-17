@@ -3,5 +3,6 @@ build/
 logs/
 .idea/
 out/
+secret/
 
 .yml
