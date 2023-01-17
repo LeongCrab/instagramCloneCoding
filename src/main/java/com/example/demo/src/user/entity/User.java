@@ -2,7 +2,6 @@ package com.example.demo.src.user.entity;
 
 import com.example.demo.common.entity.BaseEntity;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -34,22 +33,23 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     private String birthday;
-    @CreationTimestamp
+
     @Column(nullable = false)
-    private LocalDate privacy;
+    private LocalDate privacyExpiredAt;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private UserType userType = UserType.ORIGINAL;
 
     @Builder
-    public User(Long id, String phone, String name, String userId, String password, String birthday, UserType userType) {
+    public User(Long id, String phone, String name, String userId, String password, String birthday, LocalDate privacyExpiredAt, UserType userType) {
         this.id = id;
         this.phone = phone;
         this.name = name;
         this.userId = userId;
         this.password = password;
         this.birthday = birthday;
+        this.privacyExpiredAt = privacyExpiredAt;
         this.userType = userType;
     }
     public enum UserType {
