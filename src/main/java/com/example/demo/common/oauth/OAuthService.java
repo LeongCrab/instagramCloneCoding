@@ -23,7 +23,6 @@ public class OAuthService {
     private final UserService userService;
     private final JwtService jwtService;
 
-
     public void accessRequest(Constant.SocialLoginType socialLoginType) throws IOException {
         String redirectURL;
         switch (socialLoginType){ //각 소셜 로그인을 요청하면 소셜로그인 페이지로 리다이렉트 해주는 프로세스이다.
@@ -95,14 +94,10 @@ public class OAuthService {
                     GetSocialOAuthRes getSocialOAuthRes = new GetSocialOAuthRes(postUserRes.getJwt(), postUserRes.getId(), oAuthToken.getAccess_token(), oAuthToken.getToken_type());
                     return getSocialOAuthRes;
                 }
-
             }
             default: {
                 throw new BaseException(INVALID_OAUTH_TYPE);
             }
-
         }
     }
-
-
 }
