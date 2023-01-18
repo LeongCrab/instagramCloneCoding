@@ -35,7 +35,7 @@ public class User extends BaseEntity {
     private String birthday;
 
     @Column(nullable = false)
-    private LocalDate privacyExpiredAt;
+    private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

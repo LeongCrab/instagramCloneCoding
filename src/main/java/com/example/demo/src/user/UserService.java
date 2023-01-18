@@ -123,7 +123,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public boolean checkUserByEmail(String userId) {
+    public boolean checkUserByUserId(String userId) {
         Optional<User> result = userRepository.findByUserIdAndState(userId, ACTIVE);
         if (result.isPresent()) return true;
         return false;

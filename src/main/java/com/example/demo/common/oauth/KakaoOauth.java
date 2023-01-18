@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
@@ -42,7 +43,7 @@ public class KakaoOauth implements SocialOauth{
                 .map(x -> x.getKey() + "=" + x.getValue())
                 .collect(Collectors.joining("&"));
         String redirectURL = KAKAO_URL + "?" + parameterString;
-        log.info("redirectURL = ", redirectURL);
+        log.info("redirectURL = " + redirectURL);
 
         return redirectURL;
         /*
@@ -54,14 +55,24 @@ public class KakaoOauth implements SocialOauth{
     public ResponseEntity<String> requestAccessToken(String code) {
         String KAKAO_TOKEN_REQUEST_URL = "https://kauth.kakao.com/oauth/token";
         RestTemplate restTemplate = new RestTemplate();
-        Map<String, Object> params = new HashMap<>();
-        params.put("code", code);
-        params.put("client_id", KAKAO_REST_API_KEY);
-        params.put("redirect_uri", KAKAO_REDIRECT_URI);
-        params.put("grant_type", "authorization_code");
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("code", code);
+        params.add("client_id", KAKAO_REST_API_KEY);
+        params.add("redirect_uri", KAKAO_REDIRECT_URI);
+        params.add("grant_type", "authorization_code");
 
-        ResponseEntity<String> responseEntity = restTemplate.postForEntity(KAKAO_TOKEN_REQUEST_URL,
-                params,String.class);
+        //HttpHeader 오브젝트 생성
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(params, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(
+                KAKAO_TOKEN_REQUEST_URL,
+                HttpMethod.POST,
+                kakaoTokenRequest,
+                String.class
+        );
 
         if(responseEntity.getStatusCode() == HttpStatus.OK){
             return responseEntity;
@@ -86,7 +97,12 @@ public class KakaoOauth implements SocialOauth{
 
         //HttpEntity를 하나 생성해 헤더를 담아서 restTemplate으로 카카오와 통신하게 된다.
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity(headers);
-        ResponseEntity<String> response = restTemplate.exchange(KAKAO_USERINFO_REQUEST_URL, HttpMethod.GET,request,String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                KAKAO_USERINFO_REQUEST_URL,
+                HttpMethod.GET,
+                request,
+                String.class
+        );
 
         log.info("response.getBody() = {}", response.getBody());
 
