@@ -74,7 +74,28 @@ public class OAuthService {
                 }
             }
             case KAKAO:{
-                //ResponseEntity<String> accessTokenResponse = kakaoOauth.
+                ResponseEntity<String> accessTokenResponse = kakaoOauth.requestAccessToken(code);
+                KakaoOAuthToken oAuthToken = kakaoOauth.getAccessToken(accessTokenResponse);
+
+                ResponseEntity<String> userInfoResponse = kakaoOauth.requestUserInfo(oAuthToken);
+                KakaoUser kakaoUser = kakaoOauth.getUserInfo(userInfoResponse);
+                if(userService.checkUserByEmail(kakaoUser.getEmail())) { // user가 DB에 있다면, 로그인 진행
+                    // 유저 정보 조회
+                    GetUserRes getUserRes = userService.getUserByEmail(kakaoUser.getEmail());
+
+                    //서버에 user가 존재하면 앞으로 회원 인가 처리를 위한 jwtToken을 발급한다.
+                    String jwtToken = jwtService.createJwt(getUserRes.getId());
+
+                    //액세스 토큰과 jwtToken, 이외 정보들이 담긴 자바 객체를 다시 전송한다.
+                    GetSocialOAuthRes getSocialOAuthRes = new GetSocialOAuthRes(jwtToken, getUserRes.getId(), oAuthToken.getAccess_token(), oAuthToken.getToken_type());
+                    return getSocialOAuthRes;
+                }else { // user가 DB에 없다면, 회원가입 진행
+                    // 유저 정보 저장
+                    PostUserRes postUserRes = userService.createOAuthUser(kakaoUser.toEntity());
+                    GetSocialOAuthRes getSocialOAuthRes = new GetSocialOAuthRes(postUserRes.getJwt(), postUserRes.getId(), oAuthToken.getAccess_token(), oAuthToken.getToken_type());
+                    return getSocialOAuthRes;
+                }
+
             }
             default: {
                 throw new BaseException(INVALID_OAUTH_TYPE);
