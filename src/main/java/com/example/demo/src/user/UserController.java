@@ -80,33 +80,31 @@ public class UserController {
 
     /**
      * 유저정보변경 API
-     * [PATCH] /app/users/:userId
+     * [PATCH] /app/users/:id
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("/{userId}")
-    public BaseResponse<String> modifyUserName(@PathVariable("userId") Long userId, @RequestBody PatchUserReq patchUserReq){
+    @PatchMapping("/{id}")
+    public BaseResponse<String> modifyUserName(@PathVariable("id") Long id, @RequestBody PatchUserReq patchUserReq){
+        //Long jwtUserId = jwtService.getId();
 
-        Long jwtUserId = jwtService.getUserId();
-
-        userService.modifyUserName(userId, patchUserReq);
+        userService.modifyUserName(id, patchUserReq);
 
         String result = "수정 완료!!";
         return new BaseResponse<>(result);
-
     }
 
     /**
      * 유저정보삭제 API
-     * [DELETE] /app/users/:userId
+     * [DELETE] /app/users/:id
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @DeleteMapping("/{userId}")
-    public BaseResponse<String> deleteUser(@PathVariable("userId") Long userId){
-        Long jwtUserId = jwtService.getUserId();
+    @DeleteMapping("/{id}")
+    public BaseResponse<String> deleteUser(@PathVariable("id") Long id){
+        //Long jwtUserId = jwtService.getId();
 
-        userService.deleteUser(userId);
+        userService.deleteUser(id);
 
         String result = "삭제 완료!!";
         return new BaseResponse<>(result);
@@ -119,8 +117,7 @@ public class UserController {
      */
     @ResponseBody
     @PostMapping("/logIn")
-    public BaseResponse<PostLoginRes> logIn(@RequestBody PostLoginReq postLoginReq){
-        // TODO: 로그인 값들에 대한 형식적인 validatin 처리해주셔야합니다!
+    public BaseResponse<PostLoginRes> logIn(@Valid @RequestBody PostLoginReq postLoginReq){
         // TODO: 유저의 status ex) 비활성화된 유저, 탈퇴한 유저 등을 관리해주고 있다면 해당 부분에 대한 validation 처리도 해주셔야합니다.
         PostLoginRes postLoginRes = userService.logIn(postLoginReq);
         return new BaseResponse<>(postLoginRes);
@@ -129,10 +126,10 @@ public class UserController {
 
     /**
      * 유저 소셜 가입, 로그인 인증으로 리다이렉트 해주는 url
-     * [GET] /app/users/auth/:socialLoginType/login
+     * [GET] /app/users/:socialLoginType/login
      * @return void
      */
-    @GetMapping("/auth/{socialLoginType}/login")
+    @GetMapping("/{socialLoginType}/login")
     public void socialLoginRedirect(@PathVariable(name="socialLoginType") String SocialLoginPath) throws IOException {
         SocialLoginType socialLoginType= SocialLoginType.valueOf(SocialLoginPath.toUpperCase());
         oAuthService.accessRequest(socialLoginType);
@@ -141,12 +138,12 @@ public class UserController {
 
     /**
      * Social Login API Server 요청에 의한 callback 을 처리
-     * @param socialLoginPath (GOOGLE, FACEBOOK, NAVER, KAKAO)
+     * @param socialLoginPath (GOOGLE, APPLE, NAVER, KAKAO)
      * @param code API Server 로부터 넘어오는 code
      * @return SNS Login 요청 결과로 받은 Json 형태의 java 객체 (access_token, jwt_token, user_num 등)
      */
     @ResponseBody
-    @GetMapping(value = "/auth/{socialLoginType}/login/callback")
+    @GetMapping("/{socialLoginType}/login/callback")
     public BaseResponse<GetSocialOAuthRes> socialLoginCallback(
             @PathVariable(name = "socialLoginType") String socialLoginPath,
             @RequestParam(name = "code") String code) throws IOException, BaseException{

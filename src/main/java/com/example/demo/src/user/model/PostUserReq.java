@@ -13,24 +13,23 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
 public class PostUserReq {
     @NotBlank(message= "Insert phone number")
-    @Pattern(regexp = "^[0-9]+$", message = "Wrong phone number")
-    @Size(max=20, message = "maximum 20 characters")
+    @Pattern(regexp = "^[0-9]+$", message = "[phone number] Invalid format")
+    @Size(max=20, message = "[phone number] maximum 20 characters")
     private String phone;
     @NotBlank(message= "Insert name")
-    @Size(max=20, message = "maximum 20 characters")
+    @Size(max=20, message = "[name] maximum 20 characters")
     private String name;
     @NotBlank(message= "Insert user id")
-    @Pattern(regexp = "^[a-zA-Z0-9._]+$", message= "Wrong ID format")
-    @Size(max=20, message = "maximum 20 characters")
+    @Pattern(regexp = "^[a-zA-Z0-9._]+$", message= "[user id] Invalid format")
+    @Size(max=20, message = "[user id] maximum 20 characters")
     private String userId;
     @NotBlank(message= "Insert password")
-    @Size(min=6, max=20, message = "minimum 6 & maximum 20 characters")
+    @Size(min=6, max=20, message = "[password] 6 ~ 20 characters")
     private String password;
     @NotBlank(message = "Insert birthday")
-    @Pattern(regexp = "\\d{4}-(0[1-9]|1[012])-([012][0-9]|3[01])", message= "Wrong Date Format")
+    @Pattern(regexp = "\\d{4}-(0[1-9]|1[012])-([012][0-9]|3[01])", message= "[birthday] Invalid format")
     private String birthday; //'YYYY-MM-DD'
 
     //가입 시 자동으로 개인 정보 만료 날짜 1년 추가

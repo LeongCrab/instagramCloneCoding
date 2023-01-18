@@ -62,7 +62,6 @@ public class User extends BaseEntity {
     }
 
     public void deleteUser() {
-        this.state = State.INACTIVE;
+        this.state = State.DELETED;
     }
-
 }

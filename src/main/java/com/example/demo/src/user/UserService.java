@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
+import static com.example.demo.common.entity.BaseEntity.State.BANNED;
 import static com.example.demo.common.response.BaseResponseStatus.*;
 
 // Service Create, Update, Delete 의 로직 처리
@@ -129,8 +130,19 @@ public class UserService {
     }
 
     public PostLoginRes logIn(PostLoginReq postLoginReq) {
-        User user = userRepository.findByUserIdAndState(postLoginReq.getUserId(), ACTIVE)
+        User user = userRepository.findByUserId(postLoginReq.getUserId())
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
+        // 유저의 계정 상태에 따라 로그인 성공 여부 처리
+        switch(user.getState()) {
+            case ACTIVE:
+                break;
+            case INACTIVE:
+                throw new BaseException(INACTIVE_USER);
+            case BANNED:
+                throw new BaseException(BANNED_USER);
+            case DELETED:
+                throw new BaseException(DELETED_USER);
+        }
 
         String encryptPwd;
         try {

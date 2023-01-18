@@ -18,6 +18,7 @@ import static com.example.demo.common.response.BaseResponseStatus.INVALID_OAUTH_
 @RequiredArgsConstructor
 public class OAuthService {
     private final GoogleOauth googleOauth;
+    private final KakaoOauth kakaoOauth;
     private final HttpServletResponse response;
     private final UserService userService;
     private final JwtService jwtService;
@@ -26,13 +27,14 @@ public class OAuthService {
     public void accessRequest(Constant.SocialLoginType socialLoginType) throws IOException {
         String redirectURL;
         switch (socialLoginType){ //각 소셜 로그인을 요청하면 소셜로그인 페이지로 리다이렉트 해주는 프로세스이다.
-            case GOOGLE:{
+            case GOOGLE:
                 redirectURL= googleOauth.getOauthRedirectURL();
-            }break;
-            default:{
+                break;
+            case KAKAO:
+                redirectURL= kakaoOauth.getOauthRedirectURL();
+                break;
+            default:
                 throw new BaseException(INVALID_OAUTH_TYPE);
-            }
-
         }
 
         response.sendRedirect(redirectURL);
@@ -70,6 +72,9 @@ public class OAuthService {
                     GetSocialOAuthRes getSocialOAuthRes = new GetSocialOAuthRes(postUserRes.getJwt(), postUserRes.getId(), oAuthToken.getAccess_token(), oAuthToken.getToken_type());
                     return getSocialOAuthRes;
                 }
+            }
+            case KAKAO:{
+                //ResponseEntity<String> accessTokenResponse = kakaoOauth.
             }
             default: {
                 throw new BaseException(INVALID_OAUTH_TYPE);
