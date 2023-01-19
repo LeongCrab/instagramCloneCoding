@@ -33,7 +33,7 @@ public class UserService {
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
         Optional<User> checkUser = userRepository.findByUserIdAndState(postUserReq.getUserId(), ACTIVE);
-        if(checkUser.isPresent() == true){
+        if(checkUser.isPresent()){
             throw new BaseException(POST_USERS_EXISTS_USERID);
         }
         //휴대폰 번호 암호화

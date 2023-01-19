@@ -84,11 +84,11 @@ public class UserController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("/{id}")
-    public BaseResponse<String> modifyUserName(@PathVariable("id") Long id, @RequestBody PatchUserReq patchUserReq){
-        //Long jwtUserId = jwtService.getId();
+    @PatchMapping("")
+    public BaseResponse<String> modifyUserName(@RequestBody PatchUserReq patchUserReq){
+        Long jwtId = jwtService.getId();
 
-        userService.modifyUserName(id, patchUserReq);
+        userService.modifyUserName(jwtId, patchUserReq);
 
         String result = "수정 완료!!";
         return new BaseResponse<>(result);
@@ -100,11 +100,11 @@ public class UserController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @DeleteMapping("/{id}")
-    public BaseResponse<String> deleteUser(@PathVariable("id") Long id){
-        //Long jwtUserId = jwtService.getId();
+    @DeleteMapping()
+    public BaseResponse<String> deleteUser(){
+        Long jwtId = jwtService.getId();
 
-        userService.deleteUser(id);
+        userService.deleteUser(jwtId);
 
         String result = "삭제 완료!!";
         return new BaseResponse<>(result);

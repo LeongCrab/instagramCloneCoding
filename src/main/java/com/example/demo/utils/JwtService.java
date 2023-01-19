@@ -28,24 +28,24 @@ public class JwtService {
     @param userId
     @return String
      */
-    public String createJwt(Long userId){
+    public String createJwt(Long id){
         Date now = new Date();
         return Jwts.builder()
                 .setHeaderParam("type","jwt")
-                .claim("userIdx",userId)
+                .claim("id",id)
                 .setIssuedAt(now)
-                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24*365)))
+                .setExpiration(new Date(System.currentTimeMillis()+1*(1000*60*60*24)))
                 .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
                 .compact();
     }
 
     /*
-    Header에서 X-ACCESS-TOKEN 으로 JWT 추출
+    Header에서 Authorization 으로 JWT 추출
     @return String
      */
     public String getJwt(){
         HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-        return request.getHeader("X-ACCESS-TOKEN");
+        return request.getHeader("Authorization").split(" ")[1];
     }
 
     /*
