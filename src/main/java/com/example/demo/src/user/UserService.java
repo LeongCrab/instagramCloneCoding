@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
-import static com.example.demo.common.entity.BaseEntity.State.BANNED;
 import static com.example.demo.common.response.BaseResponseStatus.*;
 
 // Service Create, Update, Delete 의 로직 처리
@@ -78,7 +77,32 @@ public class UserService {
     }
 
     public PostUserRes createOAuthUser(User user) {
-        User saveUser = userRepository.save(user);
+        //이름 암호화
+        String encryptName;
+        try {
+            encryptName = new SHA256().encrypt(user.getName());
+        } catch (Exception exception) {
+            throw new BaseException(NAME_ENCRYPTION_ERROR);
+        }
+        //생일 암호화
+        String encryptBirthday;
+        try {
+            encryptBirthday = new SHA256().encrypt(user.getBirthday());
+        } catch (Exception exception) {
+            throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
+        }
+        //암호화
+        User encryptUser = user.builder()
+                .userId(user.getUserId())
+                .password(user.getPassword())
+                .phone(user.getPhone())
+                .name(encryptName)
+                .userType(user.getUserType())
+                .birthday(encryptBirthday)
+                .privacyExpiredAt(user.getPrivacyExpiredAt())
+                .build();
+
+        User saveUser = userRepository.save(encryptUser);
 
         // JWT 발급
         String jwtToken = jwtService.createJwt(saveUser.getId());
