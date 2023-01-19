@@ -1,16 +1,17 @@
 package com.example.demo.src.user;
 
 
-
 import com.example.demo.common.exceptions.BaseException;
 import com.example.demo.src.user.entity.User;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
 import static com.example.demo.common.response.BaseResponseStatus.*;
 
 // Service Create, Update, Delete 의 로직 처리
+@Slf4j
 @Transactional
 @RequiredArgsConstructor
 @Service
@@ -26,7 +28,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-
 
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) {
@@ -176,9 +177,11 @@ public class UserService {
         }
 
         if(user.getPassword().equals(encryptPwd)){
-            Long userId = user.getId();
-            String jwt = jwtService.createJwt(userId);
-            return new PostLoginRes(userId,jwt);
+            Long id = user.getId();
+            //개인정보 동의 기간 확인
+            sendNotice(id);
+            String jwt = jwtService.createJwt(id);
+            return new PostLoginRes(id,jwt);
         } else{
             throw new BaseException(FAILED_TO_LOGIN);
         }
@@ -187,6 +190,17 @@ public class UserService {
 
     public GetUserRes getUserByEmail(String userId) {
         User user = userRepository.findByUserIdAndState(userId, ACTIVE).orElseThrow(() -> new BaseException(NOT_FIND_USER));
+        sendNotice(user.getId());
         return new GetUserRes(user);
+    }
+
+    private void sendNotice(Long id){
+        User user = userRepository.findByIdAndState(id, ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_USER));
+        if(LocalDate.now().isAfter(user.getPrivacyExpiredAt())) {
+            log.warn("개인정보 동의 필요함");
+        } else {
+            log.info("개인정보 동의 유효");
+        }
     }
 }
