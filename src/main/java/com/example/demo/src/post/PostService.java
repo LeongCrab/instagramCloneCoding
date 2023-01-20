@@ -50,8 +50,8 @@ public class PostService {
                     .url(url)
                     .post(post)
                     .build();
-            Image saveImage = imageRepository.save(image);
-            log.info("추가된 사진 id :" + saveImage.getId());
+            imageRepository.save(image);
+            log.info("추가된 사진 id :" + image.getId());
         }
     }
 
@@ -62,8 +62,8 @@ public class PostService {
                     .url(url)
                     .post(post)
                     .build();
-            Video saveVideo = videoRepository.save(video);
-            log.info("추가된 영상 id :" + saveVideo.getId());
+            videoRepository.save(video);
+            log.info("추가된 영상 id :" + video.getId());
         }
     }
 }
