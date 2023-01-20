@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
-import static com.example.demo.common.response.BaseResponseStatus.DATABASE_ERROR;
-import static com.example.demo.common.response.BaseResponseStatus.NOT_FIND_USER;
+import static com.example.demo.common.response.BaseResponseStatus.*;
 
 @Slf4j
 @Transactional
@@ -32,6 +32,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final ImageRepository imageRepository;
     private final VideoRepository videoRepository;
+    private final HeartRepository heartRepository;
 
 
     public PostPostRes createPost(Long jwtId, PostPostReq postPostReq){
@@ -46,7 +47,7 @@ public class PostService {
         return new PostPostRes(savePost.getId());
     }
 
-    public void createImage(Post post, PostPostReq postPostReq) {
+    private void createImage(Post post, PostPostReq postPostReq) {
         List<String> imageList = postPostReq.getImageList();
         for(String url : imageList){
             Image image = Image.builder()
@@ -58,7 +59,7 @@ public class PostService {
         }
     }
 
-    public void createVideo(Post post, PostPostReq postPostReq) {
+    private void createVideo(Post post, PostPostReq postPostReq) {
         List<String> videoList = postPostReq.getVideoList();
         for(String url : videoList){
             Video video = Video.builder()
@@ -74,16 +75,9 @@ public class PostService {
         try{
             PageRequest pageRequest = PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "updatedAt"));
             Page<Post> postPage = postRepository.findAllByState(ACTIVE, pageRequest);
-            Page<GetPostRes> dtoPage = postPage.map((post)-> {
-                Long postId = post.getId();
-                List<String> imageList = getImageList(postId);
-                List<String> videoList = getVideoList(postId);
+            Page<GetPostRes> dtoPage = postPage.map(this::makeGetPostRes);
 
-                return new GetPostRes(post, imageList, videoList);
-            });
-            List<GetPostRes> GetPostResList = dtoPage.getContent();
-
-            return GetPostResList;
+            return dtoPage.getContent();
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
@@ -97,32 +91,63 @@ public class PostService {
         try{
             PageRequest pageRequest = PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "updatedAt"));
             Page<Post> postPage = postRepository.findByUserIdAndState(user.getId(), ACTIVE, pageRequest);
-            Page<GetPostRes> dtoPage = postPage.map((post)-> {
-                Long postId = post.getId();
-                List<String> imageList = getImageList(postId);
-                List<String> videoList = getVideoList(postId);
+            Page<GetPostRes> dtoPage = postPage.map(this::makeGetPostRes);
 
-                return new GetPostRes(post, imageList, videoList);
-            });
-            List<GetPostRes> GetPostResList = dtoPage.getContent();
-
-            return GetPostResList;
+            return dtoPage.getContent();
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
     }
 
-    private List<String> getImageList(Long postId) {
+    private int getHearts(long postId){
+        return heartRepository.countByPostIdAndState(postId, ACTIVE);
+    }
+
+    private List<String> getImageList(long postId) {
         List<Image> imageList = imageRepository.findAllByPostIdAndState(postId, ACTIVE);
         return imageList.stream()
-                .map((image) -> image.getUrl())
+                .map(Image::getUrl)
                 .collect(Collectors.toList());
     }
 
-    private List<String> getVideoList(Long postId) {
+    private List<String> getVideoList(long postId) {
         List<Video> videoList = videoRepository.findAllByPostIdAndState(postId, ACTIVE);
         return videoList.stream()
-                .map((video) -> video.getUrl())
+                .map(Video::getUrl)
                 .collect(Collectors.toList());
+    }
+    public boolean existHeart(long jwtId, long postId) {
+        Optional<Heart> existHeart = heartRepository.findByUserIdAndPostId(jwtId, postId);
+
+        return existHeart.isPresent();
+    }
+
+    public void createHeart(long jwtId, long postId) {
+        User user = userRepository.findByIdAndState(jwtId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+
+        Post post = postRepository.findByIdAndState(postId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_POST));
+
+        Heart heart = Heart.builder()
+                .user(user)
+                .post(post)
+                .build();
+        heartRepository.save(heart);
+    }
+
+    public void patchHeart(long jwtId, long postId) {
+        Heart heart = heartRepository.findByUserIdAndPostId(jwtId, postId)
+                .orElseThrow(() -> new BaseException(NOT_FIND_HEART));
+        heart.patchHeart();
+    }
+
+    private GetPostRes makeGetPostRes(Post post) {
+        Long postId = post.getId();
+        int hearts = getHearts(postId);
+        List<String> imageList = getImageList(postId);
+        List<String> videoList = getVideoList(postId);
+
+        return new GetPostRes(post, hearts, imageList, videoList);
     }
 }

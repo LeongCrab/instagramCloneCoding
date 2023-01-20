@@ -10,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
 
@@ -55,5 +54,29 @@ public class PostController {
         // Get Posts
         List<GetPostRes> getUsersRes = postService.getPostsByUserId(pageSize, pageIdx, userId);
         return new BaseResponse<>(getUsersRes);
+    }
+
+    /**
+     * 좋아요 API
+     * [POST] /posts/heart/:postId
+     * @return BaseResponse<String>
+     */
+    // Body
+    @ResponseBody
+    @PostMapping("/heart/{postId}")
+    public BaseResponse<String> createHeart(@PathVariable("postId") long postId) {
+        Long jwtId = jwtService.getId();
+        boolean existHeart = postService.existHeart(jwtId, postId);
+
+        String result;
+        if(existHeart){
+            postService.patchHeart(jwtId, postId);
+            result = "하트 변경 완료";
+        } else{
+            postService.createHeart(jwtId, postId);
+            result = "하트 생성 완료";
+        }
+
+        return new BaseResponse<>(result);
     }
 }

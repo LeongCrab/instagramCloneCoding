@@ -12,11 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostPostReq {
-    @Size(max= 2200)
+    @Size(max= 2200, message = "[Post] 최대 2,200자까지 입력 가능합니다.")
     private String content;
-    @Size(max= 10)
+    @Size(max= 10, message = "사진은 최대 10개까지 등록 가능합니다.")
     private List<String> imageList = new ArrayList<>();
-    @Size(max= 10)
+    @Size(max= 10, message = "동영상은 최대 10개까지 등록 가능합니다.")
     private List<String> videoList = new ArrayList<>();
 
     public Post toEntity(User user) {
