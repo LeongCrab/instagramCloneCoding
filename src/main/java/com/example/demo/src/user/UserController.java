@@ -45,7 +45,7 @@ public class UserController {
 
     /**
      * 회원 조회 API
-     * [GET] /users
+     * [GET] /app/users
      * 회원 번호 및 아이디 검색 조회 API
      * [GET] /app/users? UserId=
      * @return BaseResponse<List<GetUserRes>>

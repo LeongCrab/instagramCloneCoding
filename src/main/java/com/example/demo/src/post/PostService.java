@@ -2,21 +2,24 @@ package com.example.demo.src.post;
 
 
 import com.example.demo.common.exceptions.BaseException;
-import com.example.demo.src.post.entity.Image;
-import com.example.demo.src.post.entity.Video;
-import com.example.demo.src.post.model.PostPostReq;
-import com.example.demo.src.post.model.PostPostRes;
-import com.example.demo.src.post.entity.Post;
+
+import com.example.demo.src.post.model.*;
+import com.example.demo.src.post.entity.*;
 import com.example.demo.src.user.UserRepository;
 import com.example.demo.src.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
+import static com.example.demo.common.response.BaseResponseStatus.DATABASE_ERROR;
 import static com.example.demo.common.response.BaseResponseStatus.NOT_FIND_USER;
 
 @Slf4j
@@ -65,5 +68,61 @@ public class PostService {
             videoRepository.save(video);
             log.info("추가된 영상 id :" + video.getId());
         }
+    }
+    @Transactional(readOnly = true)
+    public List<GetPostRes> getPosts(int pageSize, int pageIdx) throws BaseException{
+        try{
+            PageRequest pageRequest = PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "updatedAt"));
+            Page<Post> postPage = postRepository.findAllByState(ACTIVE, pageRequest);
+            Page<GetPostRes> dtoPage = postPage.map((post)-> {
+                Long postId = post.getId();
+                List<String> imageList = getImageList(postId);
+                List<String> videoList = getVideoList(postId);
+
+                return new GetPostRes(post, imageList, videoList);
+            });
+            List<GetPostRes> GetPostResList = dtoPage.getContent();
+
+            return GetPostResList;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetPostRes> getPostsByUserId(int pageSize, int pageIdx, String userId) {
+        User user = userRepository.findByUserIdAndState(userId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+        try{
+            PageRequest pageRequest = PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "updatedAt"));
+            Page<Post> postPage = postRepository.findByUserIdAndState(user.getId(), ACTIVE, pageRequest);
+            Page<GetPostRes> dtoPage = postPage.map((post)-> {
+                Long postId = post.getId();
+                List<String> imageList = getImageList(postId);
+                List<String> videoList = getVideoList(postId);
+
+                return new GetPostRes(post, imageList, videoList);
+            });
+            List<GetPostRes> GetPostResList = dtoPage.getContent();
+
+            return GetPostResList;
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+    }
+
+    private List<String> getImageList(Long postId) {
+        List<Image> imageList = imageRepository.findAllByPostIdAndState(postId, ACTIVE);
+        return imageList.stream()
+                .map((image) -> image.getUrl())
+                .collect(Collectors.toList());
+    }
+
+    private List<String> getVideoList(Long postId) {
+        List<Video> videoList = videoRepository.findAllByPostIdAndState(postId, ACTIVE);
+        return videoList.stream()
+                .map((video) -> video.getUrl())
+                .collect(Collectors.toList());
     }
 }
