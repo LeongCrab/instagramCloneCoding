@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,6 +34,7 @@ public class FeedService {
     private final ImageRepository imageRepository;
     private final VideoRepository videoRepository;
     private final HeartRepository heartRepository;
+    private final CommentRepository commentRepository;
 
 
     public PostFeedRes createFeed(Long jwtId, PostFeedReq postFeedReq){
@@ -99,9 +101,6 @@ public class FeedService {
         }
     }
 
-    private int getHearts(long feedId){
-        return heartRepository.countByFeedIdAndState(feedId, ACTIVE);
-    }
 
     private List<String> getImageList(long feedId) {
         List<Image> imageList = imageRepository.findAllByFeedIdAndState(feedId, ACTIVE);
@@ -136,18 +135,64 @@ public class FeedService {
         heartRepository.save(heart);
     }
 
+    public void createComment(long jwtId, long feedId, PostCommentReq postCommentReq) {
+        User user = userRepository.findByIdAndState(jwtId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+
+        Feed feed = feedRepository.findByIdAndState(feedId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
+
+       Comment comment = Comment.builder()
+               .user(user)
+               .feed(feed)
+               .content(postCommentReq.getContent())
+               .build();
+        commentRepository.save(comment);
+    }
+
     public void patchHeart(long jwtId, long feedId) {
         Heart heart = heartRepository.findByUserIdAndFeedId(jwtId, feedId)
                 .orElseThrow(() -> new BaseException(NOT_FIND_HEART));
         heart.patchHeart();
     }
+    private int getHearts(long feedId) {
+        return heartRepository.countByFeedIdAndState(feedId, ACTIVE);
+    }
+    private int getComments(long feedId) {
+        return commentRepository.countByFeedIdAndState(feedId, ACTIVE);
+    }
 
     private GetFeedRes makeGetFeedRes(Feed feed) {
         Long feedId = feed.getId();
         int hearts = getHearts(feedId);
+        int comments = getComments(feedId);
         List<String> imageList = getImageList(feedId);
         List<String> videoList = getVideoList(feedId);
 
-        return new GetFeedRes(feed, hearts, imageList, videoList);
+        return new GetFeedRes(feed, hearts, comments, imageList, videoList);
+    }
+
+    public List<GetCommentRes> getCommentsByFeedId(long feedId) {
+        List<Comment> commentList = commentRepository.findAllByIdAndState(feedId, ACTIVE);
+
+        return  commentList.stream().map(comment -> new GetCommentRes(
+                comment.getId(),
+                comment.getUser().getLoginId(),
+                comment.getContent()
+        )).collect(Collectors.toList());
+    }
+
+    public void patchComment(long jwtId, long commentId, PostCommentReq postCommentReq) {
+        Comment comment = commentRepository.findByUserIdAndIdAndState(jwtId, commentId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_COMMENT));
+
+        comment.patchComment(postCommentReq.getContent());
+    }
+
+    public void deleteComment(long jwtId, long commentId) {
+        Comment comment = commentRepository.findByUserIdAndIdAndState(jwtId, commentId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_COMMENT));
+
+        comment.deleteComment();
     }
 }

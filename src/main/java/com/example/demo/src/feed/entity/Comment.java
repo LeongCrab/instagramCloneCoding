@@ -5,19 +5,25 @@ import com.example.demo.src.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
-import static com.example.demo.common.entity.BaseEntity.State.*;
+import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
+import static com.example.demo.common.entity.BaseEntity.State.INACTIVE;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
 @Getter
 @Entity
-@Table(name = "HEART")
-public class Heart extends BaseEntity {
+@Table(name = "COMMENT")
+public class Comment extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(nullable = false)
+    @Size(min=1, max=200, message = "댓글은 1자 이상 200자 이하로 입력 가능합니다.")
+    private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="userId")
@@ -28,13 +34,18 @@ public class Heart extends BaseEntity {
     private Feed feed;
 
     @Builder
-    public Heart(long id, User user, Feed feed){
+    public Comment(long id, String content, User user, Feed feed){
         this.id = id;
+        this.content = content;
         this.user = user;
         this.feed = feed;
     }
 
-    public void patchHeart() {
-        this.state = (this.state == INACTIVE) ? ACTIVE : INACTIVE;
+    public void patchComment(String content) {
+        this.content = content;
+    }
+
+    public void deleteComment() {
+        this.state = INACTIVE;
     }
 }

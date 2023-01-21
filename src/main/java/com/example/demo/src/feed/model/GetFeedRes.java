@@ -20,10 +20,11 @@ public class GetFeedRes {
     private Boolean hasVideo;
     private Integer numberOfFiles;
     private Integer hearts;
+    private Integer comments;
     private List<String> imageList;
     private List<String> videoList;
 
-    public GetFeedRes(Feed feed, int hearts, List<String> imageList, List<String> videoList) {
+    public GetFeedRes(Feed feed, int hearts, int comments, List<String> imageList, List<String> videoList) {
         this.id = feed.getId();
         this.userId = feed.getUser().getId();
         this.content = feed.getContent();
@@ -31,6 +32,7 @@ public class GetFeedRes {
         this.hasVideo = feed.getHasVideo();
         this.numberOfFiles = feed.getNumberOfFiles();
         this.hearts = hearts;
+        this.comments = comments;
         this.imageList = imageList;
         this.videoList = videoList;
     }

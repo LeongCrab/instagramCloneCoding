@@ -20,7 +20,7 @@ public class Image extends BaseEntity {
     private String url;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "postId")
+    @JoinColumn(name = "feedId")
     private Feed feed;
 
     @Builder

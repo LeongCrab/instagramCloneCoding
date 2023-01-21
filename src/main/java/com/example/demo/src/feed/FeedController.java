@@ -25,7 +25,6 @@ public class FeedController {
      * [POST] /app/feeds
      * @return BaseResponse<PostFeedRes>
      */
-    // Body
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostFeedRes> createFeed(@Valid @RequestBody PostFeedReq postFeedReq) {
@@ -43,7 +42,7 @@ public class FeedController {
      */
     @ResponseBody
     @GetMapping("") // (GET) 127.0.0.1:9000/app/feeds/pageSize/pageIdx?userId=userId
-    public BaseResponse<List<GetFeedRes>> getfeeds(
+    public BaseResponse<List<GetFeedRes>> getFeeds(
             @RequestParam(required = false) int size,
             @RequestParam(required = false) int pageIndex,
             @RequestParam(required = false) String loginId) {
@@ -57,12 +56,11 @@ public class FeedController {
 
     /**
      * 좋아요 API
-     * [POST] /feeds/heart/:feedId
+     * [POST] /app/feeds/:feedId/heart
      * @return BaseResponse<String>
      */
-    // Body
     @ResponseBody
-    @PostMapping("/heart/{feedId}")
+    @PostMapping("/{feedId}/heart")
     public BaseResponse<String> createHeart(@PathVariable("feedId") long feedId) {
         Long jwtId = jwtService.getId();
         boolean existHeart = feedService.existHeart(jwtId, feedId);
@@ -76,6 +74,62 @@ public class FeedController {
             result = "하트 생성 완료";
         }
 
+        return new BaseResponse<>(result);
+    }
+
+    /**
+     * 댓글 작성 API
+     * [POST] /app/feeds/:feedId/comment
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("/{feedId}/comment")
+    public BaseResponse<String> createComment(@PathVariable("feedId") long feedId, @RequestBody PostCommentReq postCommentReq) {
+        Long jwtId = jwtService.getId();
+        feedService.createComment(jwtId, feedId, postCommentReq);
+        String result = "댓글 작성 성공";
+        return new BaseResponse<>(result);
+    }
+
+    /**
+     * 댓글 조회 API
+     * [GET] /app/feeds/:feedId/comment
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @GetMapping("/{feedId}/comments")
+    public BaseResponse<List<GetCommentRes>> getComment(@PathVariable("feedId") long feedId) {
+        Long jwtId = jwtService.getId();
+        List<GetCommentRes> getCommentResList = feedService.getCommentsByFeedId(feedId);
+
+        return new BaseResponse<>(getCommentResList);
+    }
+
+    /**
+     * 댓글 수정 API
+     * [PATCH] /app/feeds/:feedId/comment/:commentId
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/{feedId}/comment/{commentId}")
+    public BaseResponse<String> patchComment(@PathVariable("commentId") long commentId, @RequestBody PostCommentReq postCommentReq) {
+        Long jwtId = jwtService.getId();
+        feedService.patchComment(jwtId, commentId, postCommentReq);
+        String result = "댓글 수정 성공";
+        return new BaseResponse<>(result);
+    }
+
+    /**
+     * 댓글 삭제 API
+     * [DELETE] /app/feeds/:feedId/comment/:commentId
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @DeleteMapping("/{feedId}/comment/{commentId}")
+    public BaseResponse<String> deleteComment(@PathVariable("commentId") long commentId) {
+        Long jwtId = jwtService.getId();
+        feedService.deleteComment(jwtId, commentId);
+        String result = "댓글 삭제 성공";
         return new BaseResponse<>(result);
     }
 }
