@@ -1,7 +1,7 @@
 package com.example.demo.src.user.model;
 
+import com.example.demo.common.Constant;
 import com.example.demo.src.user.entity.User;
-import com.example.demo.src.user.entity.User.UserType;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -21,10 +21,10 @@ public class PostUserReq {
     @NotBlank(message= "Insert name")
     @Size(max=20, message = "[name] maximum 20 characters")
     private String name;
-    @NotBlank(message= "Insert user id")
-    @Pattern(regexp = "^[a-zA-Z0-9._]+$", message= "[user id] Invalid format")
-    @Size(max=20, message = "[user id] maximum 20 characters")
-    private String userId;
+    @NotBlank(message= "Insert login id")
+    @Pattern(regexp = "^[a-zA-Z0-9._]+$", message= "[login id] Invalid format")
+    @Size(max=20, message = "[login id] maximum 20 characters")
+    private String loginId;
     @NotBlank(message= "Insert password")
     @Size(min=6, max=20, message = "[password] 6 ~ 20 characters")
     private String password;
@@ -35,16 +35,16 @@ public class PostUserReq {
     //가입 시 자동으로 개인 정보 만료 날짜 1년 추가
     private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
 
-    protected UserType userType;
+    protected Constant.LoginType loginType;
 
     public User toEntity() {
         return User.builder()
                 .phone(this.phone)
                 .name(this.name)
-                .userId(this.userId)
+                .loginId(this.loginId)
                 .password(this.password)
                 .birthday(this.birthday)
-                .userType(this.userType)
+                .loginType(this.loginType)
                 .privacyExpiredAt(this.privacyExpiredAt)
                 .build();
     }

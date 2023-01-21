@@ -71,9 +71,9 @@ public class PostService {
         }
     }
     @Transactional(readOnly = true)
-    public List<GetPostRes> getPosts(int pageSize, int pageIdx) throws BaseException{
+    public List<GetPostRes> getPosts(int size, int pageIndex) throws BaseException{
         try{
-            PageRequest pageRequest = PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "updatedAt"));
+            PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
             Page<Post> postPage = postRepository.findAllByState(ACTIVE, pageRequest);
             Page<GetPostRes> dtoPage = postPage.map(this::makeGetPostRes);
 
@@ -85,11 +85,11 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetPostRes> getPostsByUserId(int pageSize, int pageIdx, String userId) {
-        User user = userRepository.findByUserIdAndState(userId, ACTIVE)
+    public List<GetPostRes> getPostsByLoginId(int size, int pageIndex, String loginId) {
+        User user = userRepository.findByLoginIdAndState(loginId, ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
         try{
-            PageRequest pageRequest = PageRequest.of(pageIdx, pageSize, Sort.by(Sort.Direction.DESC, "updatedAt"));
+            PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
             Page<Post> postPage = postRepository.findByUserIdAndState(user.getId(), ACTIVE, pageRequest);
             Page<GetPostRes> dtoPage = postPage.map(this::makeGetPostRes);
 

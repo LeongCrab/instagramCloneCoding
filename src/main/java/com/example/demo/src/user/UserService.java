@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
 import static com.example.demo.common.response.BaseResponseStatus.*;
 
-// Service Create, Update, Delete 의 로직 처리
 @Slf4j
 @Transactional
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class UserService {
     //POST
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
-        Optional<User> checkUser = userRepository.findByUserIdAndState(postUserReq.getUserId(), ACTIVE);
+        Optional<User> checkUser = userRepository.findByLoginIdAndState(postUserReq.getLoginId(), ACTIVE);
         if(checkUser.isPresent()){
             throw new BaseException(POST_USERS_EXISTS_USERID);
         }
@@ -71,9 +70,7 @@ public class UserService {
 
         User saveUser = userRepository.save(postUserReq.toEntity());
 
-        //String jwtToken = jwtService.createJwt(saveUser.getId());
-        //return new PostUserRes(saveUser.getId(), jwtToken);
-        return new PostUserRes(saveUser.getId());
+        return new PostUserRes(saveUser.getId(), saveUser.getLoginId());
 
     }
 
@@ -92,29 +89,27 @@ public class UserService {
         } catch (Exception exception) {
             throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
         }
-        //암호화
+        //암호화 엔티티 생성
         User encryptUser = user.builder()
-                .userId(user.getUserId())
+                .loginId(user.getLoginId())
                 .password(user.getPassword())
                 .phone(user.getPhone())
                 .name(encryptName)
-                .userType(user.getUserType())
+                .loginType(user.getLoginType())
                 .birthday(encryptBirthday)
                 .privacyExpiredAt(user.getPrivacyExpiredAt())
                 .build();
 
         User saveUser = userRepository.save(encryptUser);
 
-        // JWT 발급
         String jwtToken = jwtService.createJwt(saveUser.getId());
-        return new PostUserRes(saveUser.getId(), jwtToken);
-
+        return new PostUserRes(saveUser.getId(), saveUser.getLoginId(), jwtToken);
     }
 
-    public void modifyUserName(Long userId, PatchUserReq patchUserReq) {
+    public void modifyPassword(Long userId, PatchUserReq patchUserReq) {
         User user = userRepository.findByIdAndState(userId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
-        user.updateName(patchUserReq.getName());
+        user.updatePassword(patchUserReq.getPassword());
     }
 
     public void deleteUser(Long userId) {
@@ -125,18 +120,16 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<GetUserRes> getUsers() {
-        List<GetUserRes> getUserResList = userRepository.findAllByState(ACTIVE).stream()
+        return userRepository.findAllByState(ACTIVE).stream()
                 .map(GetUserRes::new)
                 .collect(Collectors.toList());
-        return getUserResList;
     }
 
     @Transactional(readOnly = true)
     public List<GetUserRes> getUsersByUserId(String userId) {
-        List<GetUserRes> getUserResList = userRepository.findAllByUserIdAndState(userId, ACTIVE).stream()
+        return userRepository.findAllByLoginIdAndState(userId, ACTIVE).stream()
                 .map(GetUserRes::new)
                 .collect(Collectors.toList());
-        return getUserResList;
     }
 
 
@@ -144,18 +137,19 @@ public class UserService {
     public GetUserRes getUser(Long userId) {
         User user = userRepository.findByIdAndState(userId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
+
         return new GetUserRes(user);
     }
 
     @Transactional(readOnly = true)
     public boolean checkUserByUserId(String userId) {
-        Optional<User> result = userRepository.findByUserIdAndState(userId, ACTIVE);
-        if (result.isPresent()) return true;
-        return false;
+        Optional<User> result = userRepository.findByLoginIdAndState(userId, ACTIVE);
+
+        return result.isPresent();
     }
 
     public PostLoginRes logIn(PostLoginReq postLoginReq) {
-        User user = userRepository.findByUserId(postLoginReq.getUserId())
+        User user = userRepository.findByLoginId(postLoginReq.getLoginId())
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         // 유저의 계정 상태에 따라 로그인 성공 여부 처리
         switch(user.getState()) {
@@ -181,15 +175,16 @@ public class UserService {
             //개인정보 동의 기간 확인
             sendNotice(id);
             String jwt = jwtService.createJwt(id);
-            return new PostLoginRes(id,jwt);
+            return new PostLoginRes(postLoginReq.getLoginId(), jwt);
         } else{
             throw new BaseException(FAILED_TO_LOGIN);
         }
 
     }
 
-    public GetUserRes getUserByEmail(String userId) {
-        User user = userRepository.findByUserIdAndState(userId, ACTIVE).orElseThrow(() -> new BaseException(NOT_FIND_USER));
+    public GetUserRes getUserByLoginId(String loginId) {
+        User user = userRepository.findByLoginIdAndState(loginId, ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         sendNotice(user.getId());
         return new GetUserRes(user);
     }

@@ -6,17 +6,16 @@ import lombok.RequiredArgsConstructor;
 import com.example.demo.common.exceptions.BaseException;
 import com.example.demo.common.response.BaseResponse;
 import com.example.demo.src.post.model.*;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
 
-@Slf4j
+
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/posts")
+@RequestMapping("/app/posts")
 public class PostController {
     private final PostService postService;
     private final JwtService jwtService;
@@ -24,7 +23,7 @@ public class PostController {
 
     /**
      * 게시글 작성 API
-     * [POST] /posts
+     * [POST] /app/posts
      * @return BaseResponse<PostPostRes>
      */
     // Body
@@ -38,21 +37,24 @@ public class PostController {
 
     /**
      * 게시글 조회 API
-     * [GET] /posts/pageSize/pageIdx
+     * [GET] /app/posts/pageSize/pageIdx
      * 작성자 아이디로 검색 조회 API
-     * [GET] /posts?userId=
+     * [GET] /app/posts?userId=
      * @return BaseResponse<List<GetPostRes>>
      */
     //Query String
     @ResponseBody
-    @GetMapping("/{pageSize}/{pageIdx}") // (GET) 127.0.0.1:9000/posts/pageSize/pageIdx?userId=userId
-    public BaseResponse<List<GetPostRes>> getPosts(@PathVariable("pageSize") int pageSize, @PathVariable("pageIdx") int pageIdx, @RequestParam(required = false) String userId) {
-        if(userId == null){
-            List<GetPostRes> getUsersRes = postService.getPosts(pageSize, pageIdx);
+    @GetMapping("") // (GET) 127.0.0.1:9000/posts/pageSize/pageIdx?userId=userId
+    public BaseResponse<List<GetPostRes>> getPosts(
+            @RequestParam(required = false) int size,
+            @RequestParam(required = false) int pageIndex,
+            @RequestParam(required = false) String loginId) {
+        if(loginId == null){
+            List<GetPostRes> getUsersRes = postService.getPosts(size, pageIndex);
             return new BaseResponse<>(getUsersRes);
         }
         // Get Posts
-        List<GetPostRes> getUsersRes = postService.getPostsByUserId(pageSize, pageIdx, userId);
+        List<GetPostRes> getUsersRes = postService.getPostsByLoginId(size, pageIndex, loginId);
         return new BaseResponse<>(getUsersRes);
     }
 

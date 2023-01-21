@@ -13,12 +13,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class GetUserRes {
     private Long id;
-    private String userId;
-    private String name;
-
+    private String loginId;
     public GetUserRes(User user) {
         this.id = user.getId();
-        this.userId = user.getUserId();
-        this.name = user.getName();
+        this.loginId = user.getLoginId();
     }
 }

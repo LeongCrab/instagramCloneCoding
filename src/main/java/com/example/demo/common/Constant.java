@@ -1,8 +1,8 @@
 package com.example.demo.common;
 
 public class Constant {
-    public enum SocialLoginType{
-        GOOGLE, KAKAO, NAVER, APPLE
+    public enum LoginType{
+        ORIGINAL, GOOGLE, KAKAO, NAVER, APPLE
     }
 }
 

@@ -1,5 +1,6 @@
 package com.example.demo.src.user.model;
 
+import com.example.demo.common.Constant;
 import com.example.demo.src.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,10 +24,10 @@ public class GoogleUser {
 
     public User toEntity() {
         return User.builder()
-                .userId(this.email)
+                .loginId(this.email)
                 .password("NONE")
                 .name(this.name)
-                .userType(User.UserType.GOOGLE)
+                .loginType(Constant.LoginType.GOOGLE)
                 .build();
     }
 }

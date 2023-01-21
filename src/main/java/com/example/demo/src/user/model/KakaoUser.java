@@ -1,5 +1,6 @@
 package com.example.demo.src.user.model;
 
+import com.example.demo.common.Constant;
 import com.example.demo.src.user.entity.User;
 import lombok.*;
 
@@ -30,11 +31,11 @@ public class KakaoUser {
 
     public User toEntity() {
         return User.builder()
-                .userId(this.getKakao_account().getEmail())
+                .loginId(this.getKakao_account().getEmail())
                 .password("NONE")
                 .phone("NONE")
                 .name(this.getProperties().getNickname())
-                .userType(User.UserType.KAKAO)
+                .loginType(Constant.LoginType.KAKAO)
                 .birthday(this.getKakao_account().getBirthday())
                 .privacyExpiredAt(LocalDate.now().plusYears(1))
                 .build();

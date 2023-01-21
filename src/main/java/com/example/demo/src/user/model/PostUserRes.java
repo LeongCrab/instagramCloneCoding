@@ -11,9 +11,11 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostUserRes {
     private Long id;
+    private String loginId;
     private String jwt;
 
-    public PostUserRes(Long id) {
+    public PostUserRes(long id, String loginId) {
         this.id = id;
+        this.loginId = loginId;
     }
 }
