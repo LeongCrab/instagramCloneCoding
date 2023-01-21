@@ -30,7 +30,7 @@ public enum BaseResponseStatus {
     INVALID_JWT(false, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 JWT입니다."),
     INVALID_USER_JWT(false,HttpStatus.FORBIDDEN.value(),"권한이 없는 유저의 접근입니다."),
     NOT_FIND_USER(false,HttpStatus.NOT_FOUND.value(),"일치하는 유저가 없습니다."),
-    NOT_FIND_POST(false,HttpStatus.NOT_FOUND.value(),"일치하는 게시물이 없습니다."),
+    NOT_FIND_FEED(false,HttpStatus.NOT_FOUND.value(),"일치하는 게시물이 없습니다."),
     NOT_FIND_HEART(false,HttpStatus.NOT_FOUND.value(),"일치하는 좋아요가 없습니다."),
     INACTIVE_USER(false,HttpStatus.BAD_REQUEST.value(), "휴면 계정입니다"),
     BANNED_USER(false,HttpStatus.BAD_REQUEST.value(), "차단된 계정입니다"),

@@ -1,4 +1,4 @@
-package com.example.demo.src.post.entity;
+package com.example.demo.src.feed.entity;
 
 import com.example.demo.common.entity.BaseEntity;
 import com.example.demo.src.user.entity.User;
@@ -10,8 +10,8 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = false)
 @Getter
 @Entity
-@Table(name = "POST")
-public class Post extends BaseEntity {
+@Table(name = "FEED")
+public class Feed extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +33,7 @@ public class Post extends BaseEntity {
     private User user;
 
     @Builder
-    public Post(Long id, String content, boolean hasImage, boolean hasVideo, int numberOfFiles, User user) {
+    public Feed(Long id, String content, boolean hasImage, boolean hasVideo, int numberOfFiles, User user) {
         this.id = id;
         this.content = content;
         this.hasImage = hasImage;

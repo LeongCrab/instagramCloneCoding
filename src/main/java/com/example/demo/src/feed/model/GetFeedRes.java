@@ -1,19 +1,18 @@
-package com.example.demo.src.post.model;
+package com.example.demo.src.feed.model;
 
-import com.example.demo.src.post.entity.Post;
+import com.example.demo.src.feed.entity.Feed;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 @Getter
 @Setter
 @AllArgsConstructor
-public class GetPostRes {
+public class GetFeedRes {
     private Long id;
     private Long userId;
     private String content;
@@ -24,13 +23,13 @@ public class GetPostRes {
     private List<String> imageList;
     private List<String> videoList;
 
-    public GetPostRes(Post post, int hearts, List<String> imageList, List<String> videoList) {
-        this.id = post.getId();
-        this.userId = post.getUser().getId();
-        this.content = post.getContent();
-        this.hasImage = post.getHasImage();
-        this.hasVideo = post.getHasVideo();
-        this.numberOfFiles = post.getNumberOfFiles();
+    public GetFeedRes(Feed feed, int hearts, List<String> imageList, List<String> videoList) {
+        this.id = feed.getId();
+        this.userId = feed.getUser().getId();
+        this.content = feed.getContent();
+        this.hasImage = feed.getHasImage();
+        this.hasVideo = feed.getHasVideo();
+        this.numberOfFiles = feed.getNumberOfFiles();
         this.hearts = hearts;
         this.imageList = imageList;
         this.videoList = videoList;

@@ -1,6 +1,6 @@
-package com.example.demo.src.post;
+package com.example.demo.src.feed;
 
-import com.example.demo.src.post.entity.Heart;
+import com.example.demo.src.feed.entity.Heart;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -8,6 +8,6 @@ import java.util.Optional;
 import static com.example.demo.common.entity.BaseEntity.*;
 
 public interface HeartRepository extends JpaRepository<Heart, Long> {
-    Optional<Heart> findByUserIdAndPostId(long userId, long postId);
-    int countByPostIdAndState(long postId, State state);
+    Optional<Heart> findByUserIdAndFeedId(long userId, long feedId);
+    int countByFeedIdAndState(long feedId, State state);
 }

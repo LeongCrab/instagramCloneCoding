@@ -1,4 +1,4 @@
-package com.example.demo.src.post.entity;
+package com.example.demo.src.feed.entity;
 
 import com.example.demo.common.entity.BaseEntity;
 import lombok.*;
@@ -9,8 +9,8 @@ import javax.persistence.*;
 @EqualsAndHashCode(callSuper = false)
 @Getter
 @Entity
-@Table(name = "IMAGE")
-public class Image extends BaseEntity {
+@Table(name = "VIDEO")
+public class Video extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,12 +21,12 @@ public class Image extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postId")
-    private Post post;
+    private Feed feed;
 
     @Builder
-    public Image(Long id, String url, Post post) {
+    public Video(Long id, String url, Feed feed) {
         this.id = id;
         this.url = url;
-        this.post = post;
+        this.feed = feed;
     }
 }

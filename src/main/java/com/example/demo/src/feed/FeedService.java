@@ -1,10 +1,10 @@
-package com.example.demo.src.post;
+package com.example.demo.src.feed;
 
 
 import com.example.demo.common.exceptions.BaseException;
 
-import com.example.demo.src.post.model.*;
-import com.example.demo.src.post.entity.*;
+import com.example.demo.src.feed.model.*;
+import com.example.demo.src.feed.entity.*;
 import com.example.demo.src.user.UserRepository;
 import com.example.demo.src.user.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -26,56 +26,56 @@ import static com.example.demo.common.response.BaseResponseStatus.*;
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class PostService {
+public class FeedService {
 
     private final UserRepository userRepository;
-    private final PostRepository postRepository;
+    private final FeedRepository feedRepository;
     private final ImageRepository imageRepository;
     private final VideoRepository videoRepository;
     private final HeartRepository heartRepository;
 
 
-    public PostPostRes createPost(Long jwtId, PostPostReq postPostReq){
+    public PostFeedRes createFeed(Long jwtId, PostFeedReq postFeedReq){
         User user = userRepository.findByIdAndState(jwtId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
 
-        Post savePost = postRepository.save(postPostReq.toEntity(user));
+        Feed saveFeed = feedRepository.save(postFeedReq.toEntity(user));
 
-        createImage(savePost, postPostReq);
-        createVideo(savePost, postPostReq);
+        createImage(saveFeed, postFeedReq);
+        createVideo(saveFeed, postFeedReq);
 
-        return new PostPostRes(savePost.getId());
+        return new PostFeedRes(saveFeed.getId());
     }
 
-    private void createImage(Post post, PostPostReq postPostReq) {
-        List<String> imageList = postPostReq.getImageList();
+    private void createImage(Feed feed, PostFeedReq postFeedReq) {
+        List<String> imageList = postFeedReq.getImageList();
         for(String url : imageList){
             Image image = Image.builder()
                     .url(url)
-                    .post(post)
+                    .feed(feed)
                     .build();
             imageRepository.save(image);
             log.info("추가된 사진 id :" + image.getId());
         }
     }
 
-    private void createVideo(Post post, PostPostReq postPostReq) {
-        List<String> videoList = postPostReq.getVideoList();
+    private void createVideo(Feed feed, PostFeedReq postFeedReq) {
+        List<String> videoList = postFeedReq.getVideoList();
         for(String url : videoList){
             Video video = Video.builder()
                     .url(url)
-                    .post(post)
+                    .feed(feed)
                     .build();
             videoRepository.save(video);
             log.info("추가된 영상 id :" + video.getId());
         }
     }
     @Transactional(readOnly = true)
-    public List<GetPostRes> getPosts(int size, int pageIndex) throws BaseException{
+    public List<GetFeedRes> getFeeds(int size, int pageIndex) throws BaseException{
         try{
             PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
-            Page<Post> postPage = postRepository.findAllByState(ACTIVE, pageRequest);
-            Page<GetPostRes> dtoPage = postPage.map(this::makeGetPostRes);
+            Page<Feed> feedPage = feedRepository.findAllByState(ACTIVE, pageRequest);
+            Page<GetFeedRes> dtoPage = feedPage.map(this::makeGetFeedRes);
 
             return dtoPage.getContent();
         } catch (Exception exception) {
@@ -85,13 +85,13 @@ public class PostService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetPostRes> getPostsByLoginId(int size, int pageIndex, String loginId) {
+    public List<GetFeedRes> getFeedsByLoginId(int size, int pageIndex, String loginId) {
         User user = userRepository.findByLoginIdAndState(loginId, ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
         try{
             PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
-            Page<Post> postPage = postRepository.findByUserIdAndState(user.getId(), ACTIVE, pageRequest);
-            Page<GetPostRes> dtoPage = postPage.map(this::makeGetPostRes);
+            Page<Feed> feedPage = feedRepository.findByUserIdAndState(user.getId(), ACTIVE, pageRequest);
+            Page<GetFeedRes> dtoPage = feedPage.map(this::makeGetFeedRes);
 
             return dtoPage.getContent();
         } catch (Exception exception) {
@@ -99,55 +99,55 @@ public class PostService {
         }
     }
 
-    private int getHearts(long postId){
-        return heartRepository.countByPostIdAndState(postId, ACTIVE);
+    private int getHearts(long feedId){
+        return heartRepository.countByFeedIdAndState(feedId, ACTIVE);
     }
 
-    private List<String> getImageList(long postId) {
-        List<Image> imageList = imageRepository.findAllByPostIdAndState(postId, ACTIVE);
+    private List<String> getImageList(long feedId) {
+        List<Image> imageList = imageRepository.findAllByFeedIdAndState(feedId, ACTIVE);
         return imageList.stream()
                 .map(Image::getUrl)
                 .collect(Collectors.toList());
     }
 
-    private List<String> getVideoList(long postId) {
-        List<Video> videoList = videoRepository.findAllByPostIdAndState(postId, ACTIVE);
+    private List<String> getVideoList(long feedId) {
+        List<Video> videoList = videoRepository.findAllByFeedIdAndState(feedId, ACTIVE);
         return videoList.stream()
                 .map(Video::getUrl)
                 .collect(Collectors.toList());
     }
-    public boolean existHeart(long jwtId, long postId) {
-        Optional<Heart> existHeart = heartRepository.findByUserIdAndPostId(jwtId, postId);
+    public boolean existHeart(long jwtId, long feedId) {
+        Optional<Heart> existHeart = heartRepository.findByUserIdAndFeedId(jwtId, feedId);
 
         return existHeart.isPresent();
     }
 
-    public void createHeart(long jwtId, long postId) {
+    public void createHeart(long jwtId, long feedId) {
         User user = userRepository.findByIdAndState(jwtId, ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
 
-        Post post = postRepository.findByIdAndState(postId, ACTIVE)
-                .orElseThrow(()-> new BaseException(NOT_FIND_POST));
+        Feed feed = feedRepository.findByIdAndState(feedId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
 
         Heart heart = Heart.builder()
                 .user(user)
-                .post(post)
+                .feed(feed)
                 .build();
         heartRepository.save(heart);
     }
 
-    public void patchHeart(long jwtId, long postId) {
-        Heart heart = heartRepository.findByUserIdAndPostId(jwtId, postId)
+    public void patchHeart(long jwtId, long feedId) {
+        Heart heart = heartRepository.findByUserIdAndFeedId(jwtId, feedId)
                 .orElseThrow(() -> new BaseException(NOT_FIND_HEART));
         heart.patchHeart();
     }
 
-    private GetPostRes makeGetPostRes(Post post) {
-        Long postId = post.getId();
-        int hearts = getHearts(postId);
-        List<String> imageList = getImageList(postId);
-        List<String> videoList = getVideoList(postId);
+    private GetFeedRes makeGetFeedRes(Feed feed) {
+        Long feedId = feed.getId();
+        int hearts = getHearts(feedId);
+        List<String> imageList = getImageList(feedId);
+        List<String> videoList = getVideoList(feedId);
 
-        return new GetPostRes(post, hearts, imageList, videoList);
+        return new GetFeedRes(feed, hearts, imageList, videoList);
     }
 }

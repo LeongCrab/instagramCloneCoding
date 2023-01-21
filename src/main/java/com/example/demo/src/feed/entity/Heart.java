@@ -1,4 +1,4 @@
-package com.example.demo.src.post.entity;
+package com.example.demo.src.feed.entity;
 
 import com.example.demo.common.entity.BaseEntity;
 import com.example.demo.src.user.entity.User;
@@ -25,13 +25,13 @@ public class Heart extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="postId")
-    private Post post;
+    private Feed feed;
 
     @Builder
-    public Heart(long id, User user, Post post){
+    public Heart(long id, User user, Feed feed){
         this.id = id;
         this.user = user;
-        this.post = post;
+        this.feed = feed;
     }
 
     public void patchHeart() {
