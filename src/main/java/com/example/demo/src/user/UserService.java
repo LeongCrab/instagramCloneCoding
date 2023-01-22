@@ -2,6 +2,9 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.common.exceptions.BaseException;
+import com.example.demo.src.feed.entity.Feed;
+import com.example.demo.src.feed.entity.Heart;
+import com.example.demo.src.user.entity.Follow;
 import com.example.demo.src.user.entity.User;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
@@ -26,6 +29,7 @@ import static com.example.demo.common.response.BaseResponseStatus.*;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final FollowRepository followRepository;
     private final JwtService jwtService;
 
     //POST
@@ -35,7 +39,7 @@ public class UserService {
         if(checkUser.isPresent()){
             throw new BaseException(POST_USERS_EXISTS_USERID);
         }
-        //휴대폰 번호 암호화
+
         String encryptPhone;
         try {
             encryptPhone = new SHA256().encrypt(postUserReq.getPhone());
@@ -43,7 +47,7 @@ public class UserService {
         } catch (Exception exception) {
             throw new BaseException(PHONE_ENCRYPTION_ERROR);
         }
-        //이름 암호화
+
         String encryptName;
         try {
             encryptName = new SHA256().encrypt(postUserReq.getName());
@@ -51,7 +55,7 @@ public class UserService {
         } catch (Exception exception) {
             throw new BaseException(NAME_ENCRYPTION_ERROR);
         }
-        //비밀번호 암호화
+
         String encryptPwd;
         try {
             encryptPwd = new SHA256().encrypt(postUserReq.getPassword());
@@ -59,7 +63,7 @@ public class UserService {
         } catch (Exception exception) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
-        //생일 암호화
+
         String encryptBirthday;
         try {
             encryptBirthday = new SHA256().encrypt(postUserReq.getBirthday());
@@ -151,7 +155,7 @@ public class UserService {
     public PostLoginRes logIn(PostLoginReq postLoginReq) {
         User user = userRepository.findByLoginId(postLoginReq.getLoginId())
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
-        // 유저의 계정 상태에 따라 로그인 성공 여부 처리
+        // 계정 상태에 따라 로그인 성공 여부 처리
         switch(user.getState()) {
             case ACTIVE:
                 break;
@@ -197,5 +201,31 @@ public class UserService {
         } else {
             log.info("개인정보 동의 유효");
         }
+    }
+
+    public boolean existFollow(long followerId, long followingId) {
+        Optional<Follow> existFollow = followRepository.findByFollowerIdAndFollowingId(followerId, followingId);
+
+        return existFollow.isPresent();
+    }
+
+    public void createFollow(Long followerId, Long followingId) {
+        if(followerId.equals(followingId)) {
+            throw new BaseException(SELF_FOLLOW);
+        }
+        User follower = userRepository.findByIdAndState(followerId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+        User following = userRepository.findByIdAndState(followingId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+        Follow follow = Follow.builder()
+                .follower(follower)
+                .following(following)
+                .build();
+        followRepository.save(follow);
+    }
+    public void toggleFollow(long followerId, long followingId) {
+        Follow follow = followRepository.findByFollowerIdAndFollowingId(followerId, followingId)
+                .orElseThrow(() -> new BaseException(NOT_FIND_FOLLOW));
+        follow.toggle();
     }
 }

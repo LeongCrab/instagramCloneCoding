@@ -93,13 +93,13 @@ public class FeedController {
      */
     @ResponseBody
     @PostMapping("/{feedId}/heart")
-    public BaseResponse<String> feedsHeart(@PathVariable("feedId") long feedId) {
+    public BaseResponse<String> heart(@PathVariable("feedId") long feedId) {
         Long jwtId = jwtService.getId();
         boolean existHeart = feedService.existHeart(jwtId, feedId);
 
         String result;
         if(existHeart){
-            feedService.patchHeart(jwtId, feedId);
+            feedService.toggleHeart(jwtId, feedId);
             result = "하트 변경 완료";
         } else{
             feedService.createHeart(jwtId, feedId);

@@ -1,37 +1,38 @@
-package com.example.demo.src.feed.entity;
+package com.example.demo.src.user.entity;
 
 import com.example.demo.common.entity.BaseEntity;
-import com.example.demo.src.user.entity.User;
+import com.example.demo.src.feed.entity.Feed;
 import lombok.*;
 
 import javax.persistence.*;
 
-import static com.example.demo.common.entity.BaseEntity.State.*;
+import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
+import static com.example.demo.common.entity.BaseEntity.State.INACTIVE;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
 @Getter
 @Entity
 @Table(name = "HEART")
-public class Heart extends BaseEntity {
+public class Follow extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="userId")
-    private User user;
+    @JoinColumn(name="followerId")
+    private User follower;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="feedId")
-    private Feed feed;
+    @JoinColumn(name="followingId")
+    private User following;
 
     @Builder
-    public Heart(long id, User user, Feed feed){
+    public Follow(long id, User follower, User following){
         this.id = id;
-        this.user = user;
-        this.feed = feed;
+        this.follower = follower;
+        this.following = following;
     }
 
     public void toggle() {

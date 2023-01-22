@@ -23,10 +23,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-
     private final OAuthService oAuthService;
-
     private final JwtService jwtService;
+
 
     /**
      * 회원가입 API
@@ -40,6 +39,7 @@ public class UserController {
         PostUserRes postUserRes = userService.createUser(postUserReq);
         return new BaseResponse<>(postUserRes);
     }
+
 
     /**
      * 회원 조회 API
@@ -61,6 +61,7 @@ public class UserController {
         return new BaseResponse<>(getUsersRes);
     }
 
+
     /**
      * 회원 1명 조회 API
      * [GET] /app/users/:userId
@@ -72,7 +73,6 @@ public class UserController {
         GetUserRes getUserRes = userService.getUser(userId);
         return new BaseResponse<>(getUserRes);
     }
-
 
 
     /**
@@ -91,6 +91,7 @@ public class UserController {
         return new BaseResponse<>(result);
     }
 
+
     /**
      * 유저정보삭제 API
      * [DELETE] /app/users/:id
@@ -106,6 +107,7 @@ public class UserController {
         String result = "아이디 삭제 완료!!";
         return new BaseResponse<>(result);
     }
+
 
     /**
      * 로그인 API
@@ -149,5 +151,34 @@ public class UserController {
         GetSocialOAuthRes getSocialOAuthRes = oAuthService.oAuthLoginOrJoin(loginType,code);
         return new BaseResponse<>(getSocialOAuthRes);
     }
+
+
+    /**
+     * 팔로우 API
+     * [POST] /app/users/follow/:userId
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("/follow/{userId}")
+    public BaseResponse<String> follow(@PathVariable("userId") long userId) {
+        Long jwtId = jwtService.getId();
+
+        boolean existFollow = userService.existFollow(jwtId, userId);
+
+        String result;
+        if(existFollow){
+            userService.toggleFollow(jwtId, userId);
+            result = "팔로우 변경 완료";
+        } else{
+            userService.createFollow(jwtId, userId);
+            result = "팔로우 생성 완료";
+        }
+
+        return new BaseResponse<>(result);
+    }
+
+
+
+
 
 }

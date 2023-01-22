@@ -18,20 +18,17 @@ public enum BaseResponseStatus {
      * 400 : Request, Response 오류
      */
 
-    TEST_EMPTY_COMMENT(false, HttpStatus.BAD_REQUEST.value(), "코멘트를 입력해주세요."),
     POST_USERS_EXISTS_USERID(false,HttpStatus.BAD_REQUEST.value(),"중복된 아이디입니다."),
-    POST_TEST_EXISTS_MEMO(false,HttpStatus.BAD_REQUEST.value(),"중복된 메모입니다."),
     VALIDATION_ERROR(false, HttpStatus.BAD_REQUEST.value(), ""),
     RESPONSE_ERROR(false, HttpStatus.NOT_FOUND.value(), "값을 불러오는데 실패하였습니다."),
-    DUPLICATED_EMAIL(false, HttpStatus.BAD_REQUEST.value(), "중복된 이메일입니다."),
-    INVALID_MEMO(false,HttpStatus.NOT_FOUND.value(), "존재하지 않는 메모입니다."),
     FAILED_TO_LOGIN(false,HttpStatus.NOT_FOUND.value(),"없는 아이디거나 비밀번호가 틀렸습니다."),
     EMPTY_JWT(false, HttpStatus.UNAUTHORIZED.value(), "JWT를 입력해주세요."),
     INVALID_JWT(false, HttpStatus.UNAUTHORIZED.value(), "유효하지 않은 JWT입니다."),
     INVALID_USER_JWT(false,HttpStatus.FORBIDDEN.value(),"권한이 없는 유저의 접근입니다."),
     NOT_FIND_USER(false,HttpStatus.NOT_FOUND.value(),"일치하는 유저가 없습니다."),
+    NOT_FIND_FOLLOW(false,HttpStatus.NOT_FOUND.value(),"일치하는 팔로우가 없습니다."),
     NOT_FIND_FEED(false,HttpStatus.NOT_FOUND.value(),"일치하는 게시물이 없습니다."),
-    NO_PERMISSION(false,HttpStatus.UNAUTHORIZED.value(), "권한이 없습니다."),
+    SELF_FOLLOW(false, HttpStatus.BAD_REQUEST.value(), "자기 자신을 팔로우 할 수 없습니다."),
     NOT_FIND_HEART(false,HttpStatus.NOT_FOUND.value(),"일치하는 좋아요가 없습니다."),
     NOT_FIND_COMMENT(false,HttpStatus.NOT_FOUND.value(),"일치하는 댓글이 없습니다."),
     INACTIVE_USER(false,HttpStatus.BAD_REQUEST.value(), "휴면 계정입니다"),

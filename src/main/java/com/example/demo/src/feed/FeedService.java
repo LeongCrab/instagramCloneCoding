@@ -34,7 +34,6 @@ public class FeedService {
     private final VideoRepository videoRepository;
     private final HeartRepository heartRepository;
     private final CommentRepository commentRepository;
-
     private final ReportRepository reportRepository;
 
 
@@ -123,7 +122,7 @@ public class FeedService {
         if(feed.getUser().getId().equals(jwtId)){
             feed.modifyFeed(patchFeedReq.getContent());
         } else {
-            throw new BaseException(NO_PERMISSION);
+            throw new BaseException(INVALID_USER_JWT);
         }
     }
 
@@ -133,7 +132,7 @@ public class FeedService {
         if(feed.getUser().getId().equals(jwtId)){
             feed.deleteFeed();
         } else {
-            throw new BaseException(NO_PERMISSION);
+            throw new BaseException(INVALID_USER_JWT);
         }
     }
 
@@ -158,6 +157,12 @@ public class FeedService {
         heartRepository.save(heart);
     }
 
+    public void toggleHeart(long jwtId, long feedId) {
+        Heart heart = heartRepository.findByUserIdAndFeedId(jwtId, feedId)
+                .orElseThrow(() -> new BaseException(NOT_FIND_HEART));
+        heart.toggle();
+    }
+
     public void createComment(long jwtId, long feedId, PostCommentReq postCommentReq) {
         User user = userRepository.findByIdAndState(jwtId, ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
@@ -173,11 +178,6 @@ public class FeedService {
         commentRepository.save(comment);
     }
 
-    public void patchHeart(long jwtId, long feedId) {
-        Heart heart = heartRepository.findByUserIdAndFeedId(jwtId, feedId)
-                .orElseThrow(() -> new BaseException(NOT_FIND_HEART));
-        heart.patchHeart();
-    }
     private int getHearts(long feedId) {
         return heartRepository.countByFeedIdAndState(feedId, ACTIVE);
     }
