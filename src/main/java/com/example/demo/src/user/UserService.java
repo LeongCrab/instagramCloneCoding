@@ -2,8 +2,11 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.common.exceptions.BaseException;
+import com.example.demo.src.feed.FeedRepository;
+import com.example.demo.src.feed.FeedService;
+import com.example.demo.src.feed.ImageRepository;
 import com.example.demo.src.feed.entity.Feed;
-import com.example.demo.src.feed.entity.Heart;
+import com.example.demo.src.feed.entity.Image;
 import com.example.demo.src.user.entity.Follow;
 import com.example.demo.src.user.entity.User;
 import com.example.demo.src.user.model.*;
@@ -11,10 +14,14 @@ import com.example.demo.utils.JwtService;
 import com.example.demo.utils.SHA256;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,9 +37,11 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
+    private final FeedRepository feedRepository;
     private final JwtService jwtService;
+    private final ImageRepository imageRepository;
 
-    //POST
+
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
         Optional<User> checkUser = userRepository.findByLoginIdAndState(postUserReq.getLoginId(), ACTIVE);
@@ -110,10 +119,20 @@ public class UserService {
         return new PostUserRes(saveUser.getId(), saveUser.getLoginId(), jwtToken);
     }
 
-    public void modifyPassword(Long userId, PatchUserReq patchUserReq) {
+    public void updatePassword(Long userId, PatchUserReq patchUserReq) {
         User user = userRepository.findByIdAndState(userId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         user.updatePassword(patchUserReq.getPassword());
+    }
+
+    public void updateProfile(Long userId, PatchProfileReq patchProfileReq) {
+        User user = userRepository.findByIdAndState(userId, ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_USER));
+
+        String profileImage = patchProfileReq.getProfileImage();
+        String profileText = patchProfileReq.getProfileText();
+
+        user.updateProfile(profileImage, profileText);
     }
 
     public void deleteUser(Long userId) {
@@ -185,7 +204,7 @@ public class UserService {
         }
 
     }
-
+    @Transactional(readOnly = true)
     public GetUserRes getUserByLoginId(String loginId) {
         User user = userRepository.findByLoginIdAndState(loginId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
@@ -228,4 +247,44 @@ public class UserService {
                 .orElseThrow(() -> new BaseException(NOT_FIND_FOLLOW));
         follow.toggle();
     }
+    @Transactional(readOnly = true)
+    public GetMyPageRes getMyPage(long userId) {
+        User user = userRepository.findByIdAndState(userId, ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_USER));
+        String loginId = user.getLoginId();
+        int feeds = feedRepository.countByUserIdAndState(userId, ACTIVE);
+        int followers = followRepository.countByFollowingIdAndState(userId, ACTIVE);
+        int followings = followRepository.countByFollowerIdAndState(userId, ACTIVE);
+        String profileText = user.getProfileText();
+        String profileImage = user.getProfileImage();
+
+        return new GetMyPageRes(loginId, feeds, followers, followings, profileText, profileImage);
+
+    }
+    @Transactional(readOnly = true)
+    public GetMyPageFeedsRes getMyPageFeeds(long userId, int pageIndex) {
+        PageRequest pageRequest = PageRequest.of(pageIndex, 9, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Feed> feedPage = feedRepository.findByUserIdAndState(userId, ACTIVE, pageRequest);
+
+        boolean hasNext = feedPage.hasNext();
+        List<String> feedImageList = new ArrayList<>();
+        List<Long> feedIdList = feedPage.stream().map(Feed::getId).collect(Collectors.toList());
+        for(Long feedId : feedIdList){
+            try {
+                List<Image> imageList = imageRepository.findAllByFeedIdAndState(feedId, ACTIVE);
+
+                if(imageList.size() > 0) {
+                    String firstImage = imageList.get(0).getUrl();
+                    feedImageList.add(firstImage);
+                }
+            } catch (Exception exception) {
+                throw new BaseException(DATABASE_ERROR);
+            }
+
+        }
+        return new GetMyPageFeedsRes(hasNext, feedImageList);
+
+    }
+
+
 }

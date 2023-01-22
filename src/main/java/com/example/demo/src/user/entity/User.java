@@ -43,6 +43,12 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private LoginType loginType = LoginType.ORIGINAL;
 
+    @Column(name="profile_text")
+    private String profileText;
+
+    @Column(name="profile_image")
+    private String profileImage;
+
     @Builder
     public User(Long id, String phone, String name, String loginId, String password, String birthday, LocalDate privacyExpiredAt, LoginType loginType) {
         this.id = id;
@@ -58,6 +64,11 @@ public class User extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = new SHA256().encrypt(password);
+    }
+
+    public void updateProfile(String profileImage, String profileText){
+        this.profileImage = profileImage;
+        this.profileText = profileText;
     }
 
     public void deleteUser() {

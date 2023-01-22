@@ -91,7 +91,7 @@ public class FeedService {
         User user = userRepository.findByLoginIdAndState(loginId, ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
         try{
-            PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
+            PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
             Page<Feed> feedPage = feedRepository.findByUserIdAndState(user.getId(), ACTIVE, pageRequest);
             Page<GetFeedRes> dtoPage = feedPage.map(this::makeGetFeedRes);
 
@@ -101,14 +101,14 @@ public class FeedService {
         }
     }
 
-
+    @Transactional(readOnly = true)
     private List<String> getImageList(long feedId) {
         List<Image> imageList = imageRepository.findAllByFeedIdAndState(feedId, ACTIVE);
         return imageList.stream()
                 .map(Image::getUrl)
                 .collect(Collectors.toList());
     }
-
+    @Transactional(readOnly = true)
     private List<String> getVideoList(long feedId) {
         List<Video> videoList = videoRepository.findAllByFeedIdAndState(feedId, ACTIVE);
         return videoList.stream()
@@ -177,10 +177,11 @@ public class FeedService {
                .build();
         commentRepository.save(comment);
     }
-
+    @Transactional(readOnly = true)
     private int getHearts(long feedId) {
         return heartRepository.countByFeedIdAndState(feedId, ACTIVE);
     }
+    @Transactional(readOnly = true)
     private int getComments(long feedId) {
         return commentRepository.countByFeedIdAndState(feedId, ACTIVE);
     }
@@ -194,7 +195,7 @@ public class FeedService {
 
         return new GetFeedRes(feed, hearts, comments, imageList, videoList);
     }
-
+    @Transactional(readOnly = true)
     public List<GetCommentRes> getCommentsByFeedId(long feedId) {
         List<Comment> commentList = commentRepository.findAllByIdAndState(feedId, ACTIVE);
 

@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 
 @Slf4j
@@ -25,12 +26,18 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public BaseResponse<BaseResponseStatus> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception){
+    public BaseResponse<BaseResponseStatus> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         String errorMessage = exception.getBindingResult()
                 .getAllErrors()
                 .get(0)
                 .getDefaultMessage();
         log.error("Not Valid Exception. ", errorMessage);
         return new BaseResponse<>(BaseResponseStatus.VALIDATION_ERROR, errorMessage);
+    }
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public BaseResponse<BaseResponseStatus> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
+        String errorMessage = exception.getMessage();
+        log.error("Type Mismatch Exception. ", errorMessage);
+        return new BaseResponse<>(BaseResponseStatus.TYPE_MISMATCH_ERROR, errorMessage);
     }
 }

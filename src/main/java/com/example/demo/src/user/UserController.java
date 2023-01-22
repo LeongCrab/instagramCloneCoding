@@ -82,10 +82,10 @@ public class UserController {
      */
     @ResponseBody
     @PatchMapping("/change-password")
-    public BaseResponse<String> modifyPassword(@Valid @RequestBody PatchUserReq patchUserReq){
+    public BaseResponse<String> updatePassword(@Valid @RequestBody PatchUserReq patchUserReq){
         Long jwtId = jwtService.getId();
 
-        userService.modifyPassword(jwtId, patchUserReq);
+        userService.updatePassword(jwtId, patchUserReq);
 
         String result = "비밀번호 변경 완료!!";
         return new BaseResponse<>(result);
@@ -93,7 +93,23 @@ public class UserController {
 
 
     /**
-     * 유저정보삭제 API
+     * 유저 프로필 변경 API
+     * [PATCH] /app/users/profile
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/profile")
+    public BaseResponse<String> updateProfile(@Valid @RequestBody PatchProfileReq patchProfileReq){
+        Long jwtId = jwtService.getId();
+        userService.updateProfile(jwtId, patchProfileReq);
+
+        String result = "프로필 변경 완료!!";
+        return new BaseResponse<>(result);
+    }
+
+
+    /**
+     * 유저 정보 삭제 API
      * [DELETE] /app/users/:id
      * @return BaseResponse<String>
      */
@@ -101,7 +117,6 @@ public class UserController {
     @DeleteMapping()
     public BaseResponse<String> deleteUser(){
         Long jwtId = jwtService.getId();
-
         userService.deleteUser(jwtId);
 
         String result = "아이디 삭제 완료!!";
@@ -178,7 +193,31 @@ public class UserController {
     }
 
 
+    /**
+     * 마이페이지 조회 API
+     * [GET] /app/users/myPage/:loginId
+     * @return BaseResponse<GetUserRes>
+     */
+    @ResponseBody
+    @GetMapping("/myPage/{userId}")
+    public BaseResponse<GetMyPageRes> getMyPage(@PathVariable("userId") Long userId) {
+        GetMyPageRes getMyPageRes = userService.getMyPage(userId);
+        return new BaseResponse<>(getMyPageRes);
+    }
 
+
+    /**
+     * 마이페이지 게시글 조회 API
+     * [GET] /app/users/myPage/:loginId/feeds?pageIndex=
+     * @return BaseResponse<GetUserRes>
+     */
+    @ResponseBody
+    @GetMapping("/myPage/{userId}/feeds")
+    public BaseResponse<GetMyPageFeedsRes> getMyPageFeeds(@PathVariable("userId") Long userId, @RequestParam int pageIndex) throws BaseException{
+        GetMyPageFeedsRes getMyPageFeedsRes = userService.getMyPageFeeds(userId, pageIndex);
+
+        return new BaseResponse<>(getMyPageFeedsRes);
+    }
 
 
 }

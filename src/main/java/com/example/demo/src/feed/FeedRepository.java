@@ -15,5 +15,6 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
     Page<Feed> findByUserIdAndState(Long userId, State state, Pageable pageable);
 
     Optional<Feed> findByIdAndState(Long id, State state);
+    int countByUserIdAndState(long userId, State state);
 
 }
