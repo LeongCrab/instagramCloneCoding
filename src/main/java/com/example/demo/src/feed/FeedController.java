@@ -55,13 +55,45 @@ public class FeedController {
     }
 
     /**
+     * 게시글 내용 변경 API
+     * [PATCH] /app/feeds/:feedId
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("")
+    public BaseResponse<String> modifyFeed(@PathVariable long feedId, @Valid @RequestBody PatchFeedReq patchFeedReq){
+        Long jwtId = jwtService.getId();
+
+        feedService.modifyFeed(jwtId, feedId, patchFeedReq);
+
+        String result = "게시글 수정 완료!!";
+        return new BaseResponse<>(result);
+    }
+
+    /**
+     * 게시글 삭제 API
+     * [DELETE] /app/feeds/:feedId
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("")
+    public BaseResponse<String> deleteFeed(@PathVariable long feedId){
+        Long jwtId = jwtService.getId();
+
+        feedService.deleteFeed(jwtId, feedId);
+
+        String result = "게시글 삭제 완료!!";
+        return new BaseResponse<>(result);
+    }
+
+    /**
      * 좋아요 API
      * [POST] /app/feeds/:feedId/heart
      * @return BaseResponse<String>
      */
     @ResponseBody
     @PostMapping("/{feedId}/heart")
-    public BaseResponse<String> createHeart(@PathVariable("feedId") long feedId) {
+    public BaseResponse<String> feedsHeart(@PathVariable("feedId") long feedId) {
         Long jwtId = jwtService.getId();
         boolean existHeart = feedService.existHeart(jwtId, feedId);
 

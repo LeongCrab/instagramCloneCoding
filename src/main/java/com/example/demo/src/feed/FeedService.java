@@ -115,6 +115,28 @@ public class FeedService {
                 .map(Video::getUrl)
                 .collect(Collectors.toList());
     }
+
+    public void modifyFeed(long jwtId, long feedId, PatchFeedReq patchFeedReq) throws BaseException{
+        Feed feed = feedRepository.findByIdAndState(feedId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
+        if(feed.getUser().getId().equals(jwtId)){
+            feed.modifyFeed(patchFeedReq.getContent());
+        } else {
+            throw new BaseException(NO_PERMISSION);
+        }
+    }
+
+    public void deleteFeed(long jwtId, long feedId) throws BaseException{
+        Feed feed = feedRepository.findByIdAndState(feedId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
+        if(feed.getUser().getId().equals(jwtId)){
+            feed.deleteFeed();
+        } else {
+            throw new BaseException(NO_PERMISSION);
+        }
+    }
+
+
     public boolean existHeart(long jwtId, long feedId) {
         Optional<Heart> existHeart = heartRepository.findByUserIdAndFeedId(jwtId, feedId);
 

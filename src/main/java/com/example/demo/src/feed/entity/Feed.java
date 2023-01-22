@@ -41,4 +41,12 @@ public class Feed extends BaseEntity {
         this.numberOfFiles = numberOfFiles;
         this.user = user;
     }
+
+    public void modifyFeed(String content) {
+        this.content = content;
+    }
+
+    public void deleteFeed() {
+        this.state = State.INACTIVE;
+    }
 }
