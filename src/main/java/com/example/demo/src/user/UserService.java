@@ -221,7 +221,7 @@ public class UserService {
             log.info("개인정보 동의 유효");
         }
     }
-
+    @Transactional(readOnly = true)
     public boolean existFollow(long followerId, long followingId) {
         Optional<Follow> existFollow = followRepository.findByFollowerIdAndFollowingId(followerId, followingId);
 

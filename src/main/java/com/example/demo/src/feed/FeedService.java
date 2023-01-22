@@ -136,7 +136,7 @@ public class FeedService {
         }
     }
 
-
+    @Transactional(readOnly = true)
     public boolean existHeart(long jwtId, long feedId) {
         Optional<Heart> existHeart = heartRepository.findByUserIdAndFeedId(jwtId, feedId);
 
@@ -230,5 +230,11 @@ public class FeedService {
                 .build();
 
         reportRepository.save(report);
+
+        int reports = reportRepository.countByFeedIdAndReportReasonAndState(feedId, postReportReq.getReportReason(), ACTIVE);
+        if(reports > 10) {
+            feed.deleteFeed();
+        }
     }
+
 }
