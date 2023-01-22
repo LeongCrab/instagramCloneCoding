@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +34,8 @@ public class FeedService {
     private final VideoRepository videoRepository;
     private final HeartRepository heartRepository;
     private final CommentRepository commentRepository;
+
+    private final ReportRepository reportRepository;
 
 
     public PostFeedRes createFeed(Long jwtId, PostFeedReq postFeedReq){
@@ -216,5 +217,17 @@ public class FeedService {
                 .orElseThrow(()-> new BaseException(NOT_FIND_COMMENT));
 
         comment.deleteComment();
+    }
+
+    public void createReport(long feedId, PostReportReq postReportReq) {
+        Feed feed = feedRepository.findByIdAndState(feedId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
+
+        Report report = Report.builder()
+                .feed(feed)
+                .reportReason(postReportReq.getReportReason())
+                .build();
+
+        reportRepository.save(report);
     }
 }

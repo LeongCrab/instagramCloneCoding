@@ -41,7 +41,7 @@ public class FeedController {
      * @return BaseResponse<List<GetFeedRes>>
      */
     @ResponseBody
-    @GetMapping("") // (GET) 127.0.0.1:9000/app/feeds/pageSize/pageIdx?userId=userId
+    @GetMapping("")
     public BaseResponse<List<GetFeedRes>> getFeeds(
             @RequestParam(required = false) int size,
             @RequestParam(required = false) int pageIndex,
@@ -66,7 +66,7 @@ public class FeedController {
 
         feedService.modifyFeed(jwtId, feedId, patchFeedReq);
 
-        String result = "게시글 수정 완료!!";
+        String result = "게시글 수정 완료";
         return new BaseResponse<>(result);
     }
 
@@ -76,13 +76,13 @@ public class FeedController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("")
+    @DeleteMapping("")
     public BaseResponse<String> deleteFeed(@PathVariable long feedId){
         Long jwtId = jwtService.getId();
 
         feedService.deleteFeed(jwtId, feedId);
 
-        String result = "게시글 삭제 완료!!";
+        String result = "게시글 삭제 완료";
         return new BaseResponse<>(result);
     }
 
@@ -162,6 +162,19 @@ public class FeedController {
         Long jwtId = jwtService.getId();
         feedService.deleteComment(jwtId, commentId);
         String result = "댓글 삭제 성공";
+        return new BaseResponse<>(result);
+    }
+
+    /**
+     * 게시글 신고 API
+     * [POST] /app/feeds/:feedId/report
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("/{feedId}/report")
+    public BaseResponse<String> createReport(@PathVariable("feedId") long feedId, @RequestBody PostReportReq postReportReq) {
+        feedService.createReport(feedId, postReportReq);
+        String result = "신고 성공";
         return new BaseResponse<>(result);
     }
 }
