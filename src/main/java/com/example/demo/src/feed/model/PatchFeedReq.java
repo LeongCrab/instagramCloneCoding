@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 public class PatchFeedReq {
     @Size(max=2200, message = "[feed] 내용은 2,200자까지 입력 가능합니다.")
