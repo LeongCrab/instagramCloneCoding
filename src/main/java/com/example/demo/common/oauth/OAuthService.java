@@ -50,7 +50,7 @@ public class OAuthService {
                 ResponseEntity<String> userInfoResponse = googleOauth.requestUserInfo(oAuthToken);
                 GoogleUser googleUser = googleOauth.getUserInfo(userInfoResponse);
 
-                if(userService.checkUserByUserId(googleUser.getEmail())) {
+                if(userService.checkUserByLoginId(googleUser.getEmail())) {
                     GetUserRes getUserRes = userService.getUserByLoginId(googleUser.getEmail());
                     String jwtToken = jwtService.createJwt(getUserRes.getId());
 
@@ -67,7 +67,7 @@ public class OAuthService {
                 ResponseEntity<String> userInfoResponse = kakaoOauth.requestUserInfo(oAuthToken);
                 KakaoUser kakaoUser = kakaoOauth.getUserInfo(userInfoResponse);
 
-                if(userService.checkUserByUserId(kakaoUser.getKakao_account().getEmail())) {
+                if(userService.checkUserByLoginId(kakaoUser.getKakao_account().getEmail())) {
                     GetUserRes getUserRes = userService.getUserByLoginId(kakaoUser.getKakao_account().getEmail());
 
                     String jwtToken = jwtService.createJwt(getUserRes.getId());

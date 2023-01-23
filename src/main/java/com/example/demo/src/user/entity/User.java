@@ -36,6 +36,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String birthday;
 
+    @Column
+    private String birthYear;
+
     @Column(nullable = false)
     private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
 
@@ -50,13 +53,14 @@ public class User extends BaseEntity {
     private String profileImage;
 
     @Builder
-    public User(Long id, String phone, String name, String loginId, String password, String birthday, LocalDate privacyExpiredAt, LoginType loginType) {
+    public User(Long id, String phone, String name, String loginId, String password, String birthday, String birthYear, LocalDate privacyExpiredAt, LoginType loginType) {
         this.id = id;
         this.phone = phone;
         this.name = name;
         this.loginId = loginId;
         this.password = password;
         this.birthday = birthday;
+        this.birthYear = birthYear;
         this.privacyExpiredAt = privacyExpiredAt;
         this.loginType = loginType;
     }

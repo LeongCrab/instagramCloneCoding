@@ -19,7 +19,7 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/app/users")
+@RequestMapping("/app")
 public class UserController {
 
     private final UserService userService;
@@ -34,7 +34,7 @@ public class UserController {
      */
     // Body
     @ResponseBody
-    @PostMapping("")
+    @PostMapping("/user")
     public BaseResponse<PostUserRes> createUser(@Valid @RequestBody PostUserReq postUserReq) {
         PostUserRes postUserRes = userService.createUser(postUserReq);
         return new BaseResponse<>(postUserRes);
@@ -50,7 +50,7 @@ public class UserController {
      */
     //Query String
     @ResponseBody
-    @GetMapping("") // (GET) 127.0.0.1:9000/app/users
+    @GetMapping("/users") // (GET) 127.0.0.1:9000/app/users
     public BaseResponse<List<GetUserRes>> getUsers(@RequestParam(required = false) String userId) {
         if(userId == null){
             List<GetUserRes> getUsersRes = userService.getUsers();
@@ -68,7 +68,7 @@ public class UserController {
      * @return BaseResponse<GetUserRes>
      */
     @ResponseBody
-    @GetMapping("/{userId}") // (GET) 127.0.0.1:9000/app/users/:userId
+    @GetMapping("/users/{userId}") // (GET) 127.0.0.1:9000/app/users/:userId
     public BaseResponse<GetUserRes> getUser(@PathVariable("userId") Long userId) {
         GetUserRes getUserRes = userService.getUser(userId);
         return new BaseResponse<>(getUserRes);
@@ -81,7 +81,7 @@ public class UserController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("/change-password")
+    @PatchMapping("/users/change-password")
     public BaseResponse<String> updatePassword(@Valid @RequestBody PatchUserReq patchUserReq){
         Long jwtId = jwtService.getId();
 
@@ -98,7 +98,7 @@ public class UserController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("/profile")
+    @PatchMapping("/users/profile")
     public BaseResponse<String> updateProfile(@Valid @RequestBody PatchProfileReq patchProfileReq){
         Long jwtId = jwtService.getId();
         userService.updateProfile(jwtId, patchProfileReq);
@@ -110,11 +110,11 @@ public class UserController {
 
     /**
      * 유저 정보 삭제 API
-     * [DELETE] /app/users/:id
+     * [DELETE] /app/users
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @DeleteMapping()
+    @DeleteMapping("/users")
     public BaseResponse<String> deleteUser(){
         Long jwtId = jwtService.getId();
         userService.deleteUser(jwtId);
@@ -130,7 +130,7 @@ public class UserController {
      * @return BaseResponse<PostLoginRes>
      */
     @ResponseBody
-    @PostMapping("/login")
+    @PostMapping("/users/login")
     public BaseResponse<PostLoginRes> logIn(@Valid @RequestBody PostLoginReq postLoginReq){
         PostLoginRes postLoginRes = userService.logIn(postLoginReq);
         return new BaseResponse<>(postLoginRes);
@@ -142,7 +142,7 @@ public class UserController {
      * [GET] /app/users/:socialLoginType/login
      * @return void
      */
-    @GetMapping("/{loginType}/login")
+    @GetMapping("/users/{loginType}/login")
     public void loginRedirect(@PathVariable(name="loginType") String loginPath) throws IOException {
         LoginType loginType= LoginType.valueOf(loginPath.toUpperCase());
         oAuthService.accessRequest(loginType);
@@ -156,7 +156,7 @@ public class UserController {
      * @return SNS Login 요청 결과로 받은 Json 형태의 java 객체 (access_token, jwt_token, user_num 등)
      */
     @ResponseBody
-    @GetMapping("/{loginType}/login/callback")
+    @GetMapping("/users/{loginType}/login/callback")
     public BaseResponse<GetSocialOAuthRes> loginCallback(
             @PathVariable(name = "loginType") String loginPath,
             @RequestParam(name = "code") String code
@@ -170,7 +170,7 @@ public class UserController {
 
     /**
      * 팔로우 API
-     * [POST] /app/users/follow/:userId
+     * [POST] /app/follow/:userId
      * @return BaseResponse<String>
      */
     @ResponseBody
@@ -195,7 +195,7 @@ public class UserController {
 
     /**
      * 마이페이지 조회 API
-     * [GET] /app/users/myPage/:loginId
+     * [GET] /app/myPage/:loginId
      * @return BaseResponse<GetUserRes>
      */
     @ResponseBody
@@ -208,7 +208,7 @@ public class UserController {
 
     /**
      * 마이페이지 게시글 조회 API
-     * [GET] /app/users/myPage/:loginId/feeds?pageIndex=
+     * [GET] /app/myPage/:loginId/feeds?pageIndex=
      * @return BaseResponse<GetUserRes>
      */
     @ResponseBody
@@ -220,4 +220,39 @@ public class UserController {
     }
 
 
+    /**
+     * 채팅 API
+     * [POST] /app/chat/:receiverId
+     * @return BaseResponse<String>
+     */
+    // Body
+    @ResponseBody
+    @PostMapping("/chat/{receiverId}")
+    public BaseResponse<String> createUser(@PathVariable("receiverId") Long receiverId,@Valid @RequestBody PostChatReq postChatReq) {
+        Long jwtId = jwtService.getId();
+        userService.createChat(jwtId, receiverId, postChatReq);
+
+        String result = "채팅 보내기 성공";
+        return new BaseResponse<>(result);
+    }
+
+
+    /**
+     * 채팅 목록 조회 API
+     * [GET] /app/chats?size=&pageIndex=&userId=
+     * @return BaseResponse<GetChatRes>
+     */
+    @ResponseBody
+    @GetMapping("/chats")
+    public BaseResponse<List<GetChatRes>> getChatList(
+            @RequestParam int size,
+            @RequestParam int pageIndex,
+            @RequestParam Long receiverId
+    ) {
+        Long jwtId = jwtService.getId();
+        List<GetChatRes> getChatResList = userService.getChatList(size, pageIndex, jwtId, receiverId);
+
+        return new BaseResponse<>(getChatResList);
+
+    }
 }

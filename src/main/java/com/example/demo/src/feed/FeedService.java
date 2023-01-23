@@ -77,7 +77,7 @@ public class FeedService {
         try{
             PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
             Page<Feed> feedPage = feedRepository.findAllByState(ACTIVE, pageRequest);
-            Page<GetFeedRes> dtoPage = feedPage.map(this::makeGetFeedRes);
+            Page<GetFeedRes> dtoPage = feedPage.map(this::toDto);
 
             return dtoPage.getContent();
         } catch (Exception exception) {
@@ -93,12 +93,22 @@ public class FeedService {
         try{
             PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
             Page<Feed> feedPage = feedRepository.findByUserIdAndState(user.getId(), ACTIVE, pageRequest);
-            Page<GetFeedRes> dtoPage = feedPage.map(this::makeGetFeedRes);
+            Page<GetFeedRes> dtoPage = feedPage.map(this::toDto);
 
             return dtoPage.getContent();
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
+    }
+
+    private GetFeedRes toDto(Feed feed) {
+        Long feedId = feed.getId();
+        int hearts = getHearts(feedId);
+        int comments = getComments(feedId);
+        List<String> imageList = getImageList(feedId);
+        List<String> videoList = getVideoList(feedId);
+
+        return new GetFeedRes(feed, hearts, comments, imageList, videoList);
     }
 
     @Transactional(readOnly = true)
@@ -186,15 +196,7 @@ public class FeedService {
         return commentRepository.countByFeedIdAndState(feedId, ACTIVE);
     }
 
-    private GetFeedRes makeGetFeedRes(Feed feed) {
-        Long feedId = feed.getId();
-        int hearts = getHearts(feedId);
-        int comments = getComments(feedId);
-        List<String> imageList = getImageList(feedId);
-        List<String> videoList = getVideoList(feedId);
 
-        return new GetFeedRes(feed, hearts, comments, imageList, videoList);
-    }
     @Transactional(readOnly = true)
     public List<GetCommentRes> getCommentsByFeedId(long feedId) {
         List<Comment> commentList = commentRepository.findAllByIdAndState(feedId, ACTIVE);

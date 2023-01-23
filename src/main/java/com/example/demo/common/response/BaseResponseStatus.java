@@ -18,7 +18,7 @@ public enum BaseResponseStatus {
      * 400 : Request, Response 오류
      */
 
-    POST_USERS_EXISTS_USERID(false,HttpStatus.BAD_REQUEST.value(),"중복된 아이디입니다."),
+    POST_USERS_EXISTS_LOGIN_ID(false,HttpStatus.BAD_REQUEST.value(),"중복된 아이디입니다."),
     VALIDATION_ERROR(false, HttpStatus.BAD_REQUEST.value(), null),
     TYPE_MISMATCH_ERROR(false, HttpStatus.BAD_REQUEST.value(), null),
     RESPONSE_ERROR(false, HttpStatus.NOT_FOUND.value(), "값을 불러오는데 실패하였습니다."),
@@ -29,6 +29,7 @@ public enum BaseResponseStatus {
     NOT_FIND_USER(false,HttpStatus.NOT_FOUND.value(),"일치하는 유저가 없습니다."),
     NOT_FIND_FOLLOW(false,HttpStatus.NOT_FOUND.value(),"일치하는 팔로우가 없습니다."),
     NOT_FIND_FEED(false,HttpStatus.NOT_FOUND.value(),"일치하는 게시물이 없습니다."),
+    NOT_FIND_CHAT(false,HttpStatus.NOT_FOUND.value(),"일치하는 채팅이 없습니다."),
     SELF_FOLLOW(false, HttpStatus.BAD_REQUEST.value(), "자기 자신을 팔로우 할 수 없습니다."),
     NOT_FIND_HEART(false,HttpStatus.NOT_FOUND.value(),"일치하는 좋아요가 없습니다."),
     NOT_FIND_COMMENT(false,HttpStatus.NOT_FOUND.value(),"일치하는 댓글이 없습니다."),

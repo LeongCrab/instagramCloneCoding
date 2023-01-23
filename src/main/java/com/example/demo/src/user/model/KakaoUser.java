@@ -37,6 +37,7 @@ public class KakaoUser {
                 .name(this.getProperties().getNickname())
                 .loginType(Constant.LoginType.KAKAO)
                 .birthday(this.getKakao_account().getBirthday())
+                .birthYear("NONE")
                 .privacyExpiredAt(LocalDate.now().plusYears(1))
                 .build();
     }

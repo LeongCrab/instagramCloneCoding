@@ -43,9 +43,10 @@ public class FeedController {
     @ResponseBody
     @GetMapping("")
     public BaseResponse<List<GetFeedRes>> getFeeds(
-            @RequestParam(required = false) int size,
-            @RequestParam(required = false) int pageIndex,
-            @RequestParam(required = false) String loginId) {
+            @RequestParam int size,
+            @RequestParam int pageIndex,
+            @RequestParam(required = false) String loginId
+    ) {
         if(loginId == null){
             List<GetFeedRes> getFeedResList = feedService.getFeeds(size, pageIndex);
             return new BaseResponse<>(getFeedResList);

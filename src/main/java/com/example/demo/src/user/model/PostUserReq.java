@@ -1,12 +1,10 @@
 package com.example.demo.src.user.model;
 
-import com.example.demo.common.Constant;
+import com.example.demo.common.Constant.LoginType;
 import com.example.demo.src.user.entity.User;
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 
 @Getter
@@ -29,13 +27,16 @@ public class PostUserReq {
     @Size(min=6, max=20, message = "[password] 6 ~ 20 characters")
     private String password;
     @NotBlank(message = "Insert birthday")
-    @Pattern(regexp = "\\d{4}-(0[1-9]|1[012])-([012][0-9]|3[01])", message= "[birthday] Invalid format")
-    private String birthday; //'YYYY-MM-DD'
+    @Pattern(regexp = "(0[1-9]|1[012])([012][0-9]|3[01])", message= "[birthday] Invalid format")
+    private String birthday; //'MMDD'
+
+    @Max(value = 2023, message = "올바른 해를 입력해주세요.")
+    private Integer birthYear;
 
     //가입 시 자동으로 개인 정보 만료 날짜 1년 추가
     private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
 
-    protected Constant.LoginType loginType;
+    protected LoginType loginType;
 
     public User toEntity() {
         return User.builder()
@@ -44,6 +45,7 @@ public class PostUserReq {
                 .loginId(this.loginId)
                 .password(this.password)
                 .birthday(this.birthday)
+                .birthYear(this.birthYear.toString())
                 .loginType(this.loginType)
                 .privacyExpiredAt(this.privacyExpiredAt)
                 .build();

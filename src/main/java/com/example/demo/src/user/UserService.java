@@ -6,6 +6,7 @@ import com.example.demo.src.feed.FeedRepository;
 import com.example.demo.src.feed.ImageRepository;
 import com.example.demo.src.feed.entity.Feed;
 import com.example.demo.src.feed.entity.Image;
+import com.example.demo.src.user.entity.Chat;
 import com.example.demo.src.user.entity.Follow;
 import com.example.demo.src.user.entity.User;
 import com.example.demo.src.user.model.*;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -39,13 +41,14 @@ public class UserService {
     private final FeedRepository feedRepository;
     private final JwtService jwtService;
     private final ImageRepository imageRepository;
+    private final ChatRepository chatRepository;
 
 
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
         Optional<User> checkUser = userRepository.findByLoginIdAndState(postUserReq.getLoginId(), ACTIVE);
         if(checkUser.isPresent()){
-            throw new BaseException(POST_USERS_EXISTS_USERID);
+            throw new BaseException(POST_USERS_EXISTS_LOGIN_ID);
         }
 
         try {
@@ -72,6 +75,13 @@ public class UserService {
         try {
             String encryptBirthday = SHA256.encrypt(postUserReq.getBirthday());
             postUserReq.setBirthday(encryptBirthday);
+        } catch (Exception exception) {
+            throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
+        }
+
+        try {
+            String encryptBirthYear = SHA256.encrypt(postUserReq.getBirthYear().toString());
+            postUserReq.setBirthday(encryptBirthYear);
         } catch (Exception exception) {
             throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
         }
@@ -153,8 +163,8 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public boolean checkUserByUserId(String userId) {
-        Optional<User> result = userRepository.findByLoginIdAndState(userId, ACTIVE);
+    public boolean checkUserByLoginId(String loginId) {
+        Optional<User> result = userRepository.findByLoginIdAndState(loginId, ACTIVE);
 
         return result.isPresent();
     }
@@ -224,6 +234,7 @@ public class UserService {
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
         User following = userRepository.findByIdAndState(followingId, ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+
         Follow follow = Follow.builder()
                 .follower(follower)
                 .following(following)
@@ -239,6 +250,7 @@ public class UserService {
     public GetMyPageRes getMyPage(long userId) {
         User user = userRepository.findByIdAndState(userId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
+
         String loginId = user.getLoginId();
         int feeds = feedRepository.countByUserIdAndState(userId, ACTIVE);
         int followers = followRepository.countByFollowingIdAndState(userId, ACTIVE);
@@ -276,6 +288,51 @@ public class UserService {
             }
         }
         return new GetMyPageFeedsRes(hasNext, thumbnailList);
+    }
+
+    public void createChat(Long senderId, Long receiverId, PostChatReq postChatReq){
+        User sender = userRepository.findByIdAndState(senderId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+        User receiver = userRepository.findByIdAndState(receiverId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+        String text = postChatReq.getText();
+
+        Chat chat = Chat.builder()
+                .sender(sender)
+                .receiver(receiver)
+                .text(text)
+                .build();
+        chatRepository.save(chat);
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetChatRes> getChatList(int size, int pageIndex, Long jwtId, Long receiverId) {
+        User sender = userRepository.findByIdAndState(jwtId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+
+        User receiver = userRepository.findByIdAndState(receiverId, ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_USER));
+
+        PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        try{
+            Page<Chat> chatPage = chatRepository.findChat(jwtId, receiverId, ACTIVE, pageRequest);
+            Page<GetChatRes> dtoPage = chatPage.map(this::toDto);
+            System.out.println(dtoPage.getContent());
+            return dtoPage.getContent();
+        } catch (Exception exception) {
+            throw new BaseException(DATABASE_ERROR);
+        }
+
+    }
+
+    private GetChatRes toDto(Chat chat){
+        Long chatId = chat.getId();
+        Long senderId = chat.getSender().getId();
+        Long receiverId = chat.getReceiver().getId();
+        String text = chat.getText();
+        LocalDateTime createdAt = chat.getCreatedAt();
+
+        return new GetChatRes(chatId, senderId, receiverId, text, createdAt);
     }
 
 }
