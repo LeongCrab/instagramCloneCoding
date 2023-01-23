@@ -60,10 +60,13 @@ public class User extends BaseEntity {
         this.privacyExpiredAt = privacyExpiredAt;
         this.loginType = loginType;
     }
-
+    public void encryptOAuthUser(String encryptName, String encryptBirthday) {
+        this.name = encryptName;
+        this.birthday = encryptBirthday;
+    }
 
     public void updatePassword(String password) {
-        this.password = new SHA256().encrypt(password);
+        this.password = SHA256.encrypt(password);
     }
 
     public void updateProfile(String profileImage, String profileText){

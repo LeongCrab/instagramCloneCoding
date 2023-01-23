@@ -11,7 +11,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PostCommentReq {
     private String content;
-
-    public static class PatchFeedReq {
-    }
 }

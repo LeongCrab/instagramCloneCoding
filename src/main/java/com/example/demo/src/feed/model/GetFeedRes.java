@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -15,6 +16,7 @@ import java.util.List;
 public class GetFeedRes {
     private Long id;
     private Long userId;
+    private LocalDateTime createdAt;
     private String content;
     private Boolean hasImage;
     private Boolean hasVideo;
@@ -27,6 +29,7 @@ public class GetFeedRes {
     public GetFeedRes(Feed feed, int hearts, int comments, List<String> imageList, List<String> videoList) {
         this.id = feed.getId();
         this.userId = feed.getUser().getId();
+        this.createdAt = feed.getCreatedAt();
         this.content = feed.getContent();
         this.hasImage = feed.getHasImage();
         this.hasVideo = feed.getHasVideo();

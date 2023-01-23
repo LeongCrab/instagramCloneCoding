@@ -3,7 +3,6 @@ package com.example.demo.src.user;
 
 import com.example.demo.common.exceptions.BaseException;
 import com.example.demo.src.feed.FeedRepository;
-import com.example.demo.src.feed.FeedService;
 import com.example.demo.src.feed.ImageRepository;
 import com.example.demo.src.feed.entity.Feed;
 import com.example.demo.src.feed.entity.Image;
@@ -49,33 +48,29 @@ public class UserService {
             throw new BaseException(POST_USERS_EXISTS_USERID);
         }
 
-        String encryptPhone;
         try {
-            encryptPhone = new SHA256().encrypt(postUserReq.getPhone());
+            String encryptPhone = SHA256.encrypt(postUserReq.getPhone());
             postUserReq.setPhone(encryptPhone);
         } catch (Exception exception) {
             throw new BaseException(PHONE_ENCRYPTION_ERROR);
         }
 
-        String encryptName;
         try {
-            encryptName = new SHA256().encrypt(postUserReq.getName());
+            String encryptName = SHA256.encrypt(postUserReq.getName());
             postUserReq.setName(encryptName);
         } catch (Exception exception) {
             throw new BaseException(NAME_ENCRYPTION_ERROR);
         }
 
-        String encryptPwd;
         try {
-            encryptPwd = new SHA256().encrypt(postUserReq.getPassword());
+            String encryptPwd = SHA256.encrypt(postUserReq.getPassword());
             postUserReq.setPassword(encryptPwd);
         } catch (Exception exception) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
 
-        String encryptBirthday;
         try {
-            encryptBirthday = new SHA256().encrypt(postUserReq.getBirthday());
+            String encryptBirthday = SHA256.encrypt(postUserReq.getBirthday());
             postUserReq.setBirthday(encryptBirthday);
         } catch (Exception exception) {
             throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
@@ -91,32 +86,25 @@ public class UserService {
         //이름 암호화
         String encryptName;
         try {
-            encryptName = new SHA256().encrypt(user.getName());
+            encryptName = SHA256.encrypt(user.getName());
         } catch (Exception exception) {
             throw new BaseException(NAME_ENCRYPTION_ERROR);
         }
         //생일 암호화
         String encryptBirthday;
         try {
-            encryptBirthday = new SHA256().encrypt(user.getBirthday());
+            encryptBirthday = SHA256.encrypt(user.getBirthday());
         } catch (Exception exception) {
             throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
         }
-        //암호화 엔티티 생성
-        User encryptUser = user.builder()
-                .loginId(user.getLoginId())
-                .password(user.getPassword())
-                .phone(user.getPhone())
-                .name(encryptName)
-                .loginType(user.getLoginType())
-                .birthday(encryptBirthday)
-                .privacyExpiredAt(user.getPrivacyExpiredAt())
-                .build();
 
-        User saveUser = userRepository.save(encryptUser);
+        //유저 엔티티 암호화
+        user.encryptOAuthUser(encryptName, encryptBirthday);
 
-        String jwtToken = jwtService.createJwt(saveUser.getId());
-        return new PostUserRes(saveUser.getId(), saveUser.getLoginId(), jwtToken);
+        userRepository.save(user);
+
+        String jwtToken = jwtService.createJwt(user.getId());
+        return new PostUserRes(user.getId(), user.getLoginId(), jwtToken);
     }
 
     public void updatePassword(Long userId, PatchUserReq patchUserReq) {
@@ -188,7 +176,7 @@ public class UserService {
 
         String encryptPwd;
         try {
-            encryptPwd = new SHA256().encrypt(postLoginReq.getPassword());
+            encryptPwd = SHA256.encrypt(postLoginReq.getPassword());
         } catch (Exception exception) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
@@ -263,28 +251,31 @@ public class UserService {
     }
     @Transactional(readOnly = true)
     public GetMyPageFeedsRes getMyPageFeeds(long userId, int pageIndex) {
-        PageRequest pageRequest = PageRequest.of(pageIndex, 9, Sort.by(Sort.Direction.DESC, "createdAt"));
+        final int size = 9;
+
+        PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Feed> feedPage = feedRepository.findByUserIdAndState(userId, ACTIVE, pageRequest);
 
         boolean hasNext = feedPage.hasNext();
-        List<String> feedImageList = new ArrayList<>();
-        List<Long> feedIdList = feedPage.stream().map(Feed::getId).collect(Collectors.toList());
+        List<String> thumbnailList = new ArrayList<>();
+
+        List<Long> feedIdList = feedPage.stream()
+                .map(Feed::getId)
+                .collect(Collectors.toList());
+
         for(Long feedId : feedIdList){
             try {
                 List<Image> imageList = imageRepository.findAllByFeedIdAndState(feedId, ACTIVE);
 
-                if(imageList.size() > 0) {
-                    String firstImage = imageList.get(0).getUrl();
-                    feedImageList.add(firstImage);
+                if(!imageList.isEmpty()) {
+                    String thumbnail = imageList.get(0).getUrl();
+                    thumbnailList.add(thumbnail);
                 }
             } catch (Exception exception) {
                 throw new BaseException(DATABASE_ERROR);
             }
-
         }
-        return new GetMyPageFeedsRes(hasNext, feedImageList);
-
+        return new GetMyPageFeedsRes(hasNext, thumbnailList);
     }
-
 
 }

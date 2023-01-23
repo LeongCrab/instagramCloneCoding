@@ -1,10 +1,11 @@
 package com.example.demo.utils;
 
+import lombok.NoArgsConstructor;
+
 import java.security.MessageDigest;
 
+@NoArgsConstructor
 public class SHA256 {
-    public SHA256() {
-    }
 
     public static String encrypt(String planText) {
         try {

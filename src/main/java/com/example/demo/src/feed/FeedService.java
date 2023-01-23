@@ -202,6 +202,8 @@ public class FeedService {
         return  commentList.stream().map(comment -> new GetCommentRes(
                 comment.getId(),
                 comment.getUser().getLoginId(),
+                comment.getCreatedAt(),
+                comment.getUpdatedAt(),
                 comment.getContent()
         )).collect(Collectors.toList());
     }
@@ -231,8 +233,14 @@ public class FeedService {
 
         reportRepository.save(report);
 
-        int reports = reportRepository.countByFeedIdAndReportReasonAndState(feedId, postReportReq.getReportReason(), ACTIVE);
-        if(reports > 10) {
+        deleteReportedFeed(feed);
+    }
+
+    private void deleteReportedFeed(Feed feed) {
+        final int cut = 10;
+        long feedId = feed.getId();
+        int reports = reportRepository.countByFeedIdAndState(feedId, ACTIVE);
+        if(reports > cut) {
             feed.deleteFeed();
         }
     }
