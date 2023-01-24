@@ -12,26 +12,26 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostUserReq {
-    @NotBlank(message= "Insert phone number")
-    @Pattern(regexp = "^[0-9]+$", message = "[phone number] Invalid format")
-    @Size(max=20, message = "[phone number] maximum 20 characters")
+    @NotBlank(message= "휴대폰 번호를 입력하세요")
+    @Pattern(regexp = "^[0-9]+$", message = "휴대폰 번호는 숫자만 입력 가능합니다")
+    @Size(max=20, message = "휴대폰 번호는 최대 20자까지 입력 가능합니다.")
     private String phone;
-    @NotBlank(message= "Insert name")
-    @Size(max=20, message = "[name] maximum 20 characters")
+    @NotBlank(message= "이름을 입력하세요")
+    @Size(max=20, message = "이름은 최대 20자까지 입력 가능합니다.")
     private String name;
-    @NotBlank(message= "Insert login id")
-    @Pattern(regexp = "^[a-zA-Z0-9._]+$", message= "[login id] Invalid format")
-    @Size(max=20, message = "[login id] maximum 20 characters")
+    @NotBlank(message= "로그인 아이디를 입력하세요")
+    @Pattern(regexp = "^[a-zA-Z0-9._]+$", message= "아이디는 알파벳과 '.', '_'만 입력 가능합니다.")
+    @Size(max=20, message = "로그인 아이디는 최대 20자까지 입력 가능합니다.")
     private String loginId;
-    @NotBlank(message= "Insert password")
-    @Size(min=6, max=20, message = "[password] 6 ~ 20 characters")
+    @NotBlank(message= "비밀번호를 입력하세요")
+    @Size(min=6, max=20, message = "비밀번호는 6~20자 입력 가능합니다.")
     private String password;
-    @NotBlank(message = "Insert birthday")
-    @Pattern(regexp = "(0[1-9]|1[012])([012][0-9]|3[01])", message= "[birthday] Invalid format")
-    private String birthday; //'MMDD'
+    @NotBlank(message = "생일을 입력하세요")
+    @Pattern(regexp = "(0[1-9]|1[012])([012][0-9]|3[01])", message= "생일 형식은 'MMDD'입니다")
+    private String birthday;
 
-    @Max(value = 2023, message = "올바른 해를 입력해주세요.")
-    private Integer birthYear;
+    @Size(min=4, max=4, message = "해는 4자리로 입력해주세요.")
+    private String birthYear;
 
     //가입 시 자동으로 개인 정보 만료 날짜 1년 추가
     private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
@@ -45,7 +45,7 @@ public class PostUserReq {
                 .loginId(this.loginId)
                 .password(this.password)
                 .birthday(this.birthday)
-                .birthYear(this.birthYear.toString())
+                .birthYear(this.birthYear)
                 .loginType(this.loginType)
                 .privacyExpiredAt(this.privacyExpiredAt)
                 .build();

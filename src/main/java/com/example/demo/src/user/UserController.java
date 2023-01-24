@@ -53,7 +53,7 @@ public class UserController {
 
         userService.updatePassword(jwtId, patchUserReq);
 
-        String result = "비밀번호 변경 완료!!";
+        String result = "비밀번호 변경 완료";
         return new BaseResponse<>(result);
     }
 
@@ -69,7 +69,7 @@ public class UserController {
         Long jwtId = jwtService.getId();
         userService.updateProfile(jwtId, patchProfileReq);
 
-        String result = "프로필 변경 완료!!";
+        String result = "프로필 변경 완료";
         return new BaseResponse<>(result);
     }
 
@@ -85,7 +85,7 @@ public class UserController {
         Long jwtId = jwtService.getId();
         userService.deleteUser(jwtId);
 
-        String result = "아이디 삭제 완료!!";
+        String result = "아이디 삭제 완료";
         return new BaseResponse<>(result);
     }
 

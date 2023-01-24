@@ -84,4 +84,8 @@ public class User extends BaseEntity {
     public void deleteUser() {
         this.state = State.DELETED;
     }
+
+    public void banUser() {
+        this.state = State.BANNED;
+    }
 }

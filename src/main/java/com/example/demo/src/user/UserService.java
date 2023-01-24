@@ -1,7 +1,10 @@
 package com.example.demo.src.user;
 
 
+import com.example.demo.common.Constant;
 import com.example.demo.common.exceptions.BaseException;
+import com.example.demo.src.admin.LogRepository;
+import com.example.demo.src.admin.entity.Log;
 import com.example.demo.src.admin.model.GetUserRes;
 import com.example.demo.src.feed.FeedRepository;
 import com.example.demo.src.feed.ImageRepository;
@@ -43,8 +46,8 @@ public class UserService {
     private final JwtService jwtService;
     private final ImageRepository imageRepository;
     private final ChatRepository chatRepository;
-
     private final AES128 aes128;
+    private final LogRepository logRepository;
 
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
@@ -83,9 +86,9 @@ public class UserService {
 
         try {
             String encryptBirthYear = aes128.encrypt(postUserReq.getBirthYear().toString());
-            postUserReq.setBirthday(encryptBirthYear);
+            postUserReq.setBirthYear(encryptBirthYear);
         } catch (Exception exception) {
-            throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
+            throw new BaseException(BIRTHYEAR_ENCRYPTION_ERROR);
         }
 
         User saveUser = userRepository.save(postUserReq.toEntity());
@@ -183,6 +186,8 @@ public class UserService {
             //개인정보 동의 기간 확인
             sendNotice(id);
             String jwt = jwtService.createJwt(id);
+            Log log = new Log(Constant.DataType.LOGIN, Constant.MethodType.CREATE, id);
+            logRepository.save(log);
             return new PostLoginRes(postLoginReq.getLoginId(), jwt);
         } else{
             throw new BaseException(FAILED_TO_LOGIN);

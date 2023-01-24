@@ -87,8 +87,8 @@ public class FeedService {
     }
 
     @Transactional(readOnly = true)
-    public List<GetFeedRes> getFeedsByLoginId(int size, int pageIndex, String loginId) {
-        User user = userRepository.findByLoginIdAndState(loginId, ACTIVE)
+    public List<GetFeedRes> getFeedsByLoginId(int size, int pageIndex, Long userId) {
+        User user = userRepository.findByIdAndState(userId, ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
         try{
             PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));

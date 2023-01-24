@@ -19,6 +19,7 @@ public class Report extends BaseEntity {
     private Long id;
 
     @Column
+    @Enumerated(EnumType.STRING)
     private ReportReason reportReason;
 
     @ManyToOne(fetch = FetchType.LAZY)

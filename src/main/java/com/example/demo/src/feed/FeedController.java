@@ -45,13 +45,13 @@ public class FeedController {
     public BaseResponse<List<GetFeedRes>> getFeeds(
             @RequestParam int size,
             @RequestParam int pageIndex,
-            @RequestParam(required = false) String loginId
+            @RequestParam(required = false) Long userId
     ) {
-        if(loginId == null){
+        if(userId == null){
             List<GetFeedRes> getFeedResList = feedService.getFeeds(size, pageIndex);
             return new BaseResponse<>(getFeedResList);
         }
-        List<GetFeedRes> getFeedResList = feedService.getFeedsByLoginId(size, pageIndex, loginId);
+        List<GetFeedRes> getFeedResList = feedService.getFeedsByLoginId(size, pageIndex, userId);
         return new BaseResponse<>(getFeedResList);
     }
 

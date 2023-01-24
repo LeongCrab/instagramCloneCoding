@@ -2,6 +2,8 @@ package com.example.demo.common.oauth;
 
 import com.example.demo.common.Constant;
 import com.example.demo.common.exceptions.BaseException;
+import com.example.demo.src.admin.LogRepository;
+import com.example.demo.src.admin.entity.Log;
 import com.example.demo.src.admin.model.GetUserRes;
 import com.example.demo.src.user.UserService;
 import com.example.demo.src.user.model.*;
@@ -23,6 +25,7 @@ public class OAuthService {
     private final HttpServletResponse response;
     private final UserService userService;
     private final JwtService jwtService;
+    private final LogRepository logRepository;
 
     public void accessRequest(Constant.LoginType loginType) throws IOException {
         String redirectURL;
@@ -72,7 +75,8 @@ public class OAuthService {
                     GetUserRes getUserRes = userService.getUserByLoginId(kakaoUser.getKakao_account().getEmail());
 
                     String jwtToken = jwtService.createJwt(getUserRes.getId());
-
+                    Log log = new Log(Constant.DataType.LOGIN, Constant.MethodType.CREATE, getUserRes.getId());
+                    logRepository.save(log);
                     return new GetSocialOAuthRes(jwtToken, getUserRes.getId(), oAuthToken.getAccess_token(), oAuthToken.getToken_type());
                 } else {
                     PostUserRes postUserRes = userService.createOAuthUser(kakaoUser.toEntity());
