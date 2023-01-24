@@ -20,7 +20,8 @@ public enum BaseResponseStatus {
 
     POST_USERS_EXISTS_LOGIN_ID(false,HttpStatus.BAD_REQUEST.value(),"중복된 아이디입니다."),
     VALIDATION_ERROR(false, HttpStatus.BAD_REQUEST.value(), null),
-    TYPE_MISMATCH_ERROR(false, HttpStatus.BAD_REQUEST.value(), null),
+    TYPE_MISMATCH_ERROR(false, HttpStatus.BAD_REQUEST.value(), "쿼리에 올바른 타입의 값을 입력해주세요"),
+    JSON_PARSE_ERROR(false, HttpStatus.BAD_REQUEST.value(), "JSON에 올바른 타입의 값을 입력해주세요"),
     RESPONSE_ERROR(false, HttpStatus.NOT_FOUND.value(), "값을 불러오는데 실패하였습니다."),
     FAILED_TO_LOGIN(false,HttpStatus.NOT_FOUND.value(),"없는 아이디거나 비밀번호가 틀렸습니다."),
     EMPTY_JWT(false, HttpStatus.UNAUTHORIZED.value(), "JWT를 입력해주세요."),

@@ -1,13 +1,15 @@
 package com.example.demo.src.user.entity;
 
 import com.example.demo.common.entity.BaseEntity;
-import com.example.demo.utils.SHA256;
+import com.example.demo.common.exceptions.BaseException;
+import com.example.demo.utils.AES128;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 import static com.example.demo.common.Constant.*;
+import static com.example.demo.common.response.BaseResponseStatus.PASSWORD_ENCRYPTION_ERROR;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -70,7 +72,8 @@ public class User extends BaseEntity {
     }
 
     public void updatePassword(String password) {
-        this.password = SHA256.encrypt(password);
+        this.password = password;
+
     }
 
     public void updateProfile(String profileImage, String profileText){

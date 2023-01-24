@@ -2,6 +2,7 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.common.exceptions.BaseException;
+import com.example.demo.src.admin.model.GetUserRes;
 import com.example.demo.src.feed.FeedRepository;
 import com.example.demo.src.feed.ImageRepository;
 import com.example.demo.src.feed.entity.Feed;
@@ -11,7 +12,7 @@ import com.example.demo.src.user.entity.Follow;
 import com.example.demo.src.user.entity.User;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;
-import com.example.demo.utils.SHA256;
+import com.example.demo.utils.AES128;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -43,6 +44,7 @@ public class UserService {
     private final ImageRepository imageRepository;
     private final ChatRepository chatRepository;
 
+    private final AES128 aes128;
 
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
@@ -52,35 +54,35 @@ public class UserService {
         }
 
         try {
-            String encryptPhone = SHA256.encrypt(postUserReq.getPhone());
+            String encryptPhone = aes128.encrypt(postUserReq.getPhone());
             postUserReq.setPhone(encryptPhone);
         } catch (Exception exception) {
             throw new BaseException(PHONE_ENCRYPTION_ERROR);
-        }
+       }
 
         try {
-            String encryptName = SHA256.encrypt(postUserReq.getName());
+            String encryptName = aes128.encrypt(postUserReq.getName());
             postUserReq.setName(encryptName);
         } catch (Exception exception) {
             throw new BaseException(NAME_ENCRYPTION_ERROR);
         }
 
         try {
-            String encryptPwd = SHA256.encrypt(postUserReq.getPassword());
+            String encryptPwd = aes128.encrypt(postUserReq.getPassword());
             postUserReq.setPassword(encryptPwd);
         } catch (Exception exception) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
 
         try {
-            String encryptBirthday = SHA256.encrypt(postUserReq.getBirthday());
+            String encryptBirthday = aes128.encrypt(postUserReq.getBirthday());
             postUserReq.setBirthday(encryptBirthday);
         } catch (Exception exception) {
             throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
         }
 
         try {
-            String encryptBirthYear = SHA256.encrypt(postUserReq.getBirthYear().toString());
+            String encryptBirthYear = aes128.encrypt(postUserReq.getBirthYear().toString());
             postUserReq.setBirthday(encryptBirthYear);
         } catch (Exception exception) {
             throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
@@ -96,14 +98,14 @@ public class UserService {
         //이름 암호화
         String encryptName;
         try {
-            encryptName = SHA256.encrypt(user.getName());
+            encryptName = aes128.encrypt(user.getName());
         } catch (Exception exception) {
             throw new BaseException(NAME_ENCRYPTION_ERROR);
         }
         //생일 암호화
         String encryptBirthday;
         try {
-            encryptBirthday = SHA256.encrypt(user.getBirthday());
+            encryptBirthday = aes128.encrypt(user.getBirthday());
         } catch (Exception exception) {
             throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
         }
@@ -120,7 +122,15 @@ public class UserService {
     public void updatePassword(Long userId, PatchUserReq patchUserReq) {
         User user = userRepository.findByIdAndState(userId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
-        user.updatePassword(patchUserReq.getPassword());
+
+        String encryptPwd;
+        try{
+            encryptPwd = aes128.encrypt(patchUserReq.getPassword());
+        } catch (Exception exception) {
+            throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
+        }
+
+        user.updatePassword(encryptPwd);
     }
 
     public void updateProfile(Long userId, PatchProfileReq patchProfileReq) {
@@ -137,29 +147,6 @@ public class UserService {
         User user = userRepository.findByIdAndState(userId, ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         user.deleteUser();
-    }
-
-    @Transactional(readOnly = true)
-    public List<GetUserRes> getUsers() {
-        return userRepository.findAllByState(ACTIVE).stream()
-                .map(GetUserRes::new)
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<GetUserRes> getUsersByUserId(String userId) {
-        return userRepository.findAllByLoginIdAndState(userId, ACTIVE).stream()
-                .map(GetUserRes::new)
-                .collect(Collectors.toList());
-    }
-
-
-    @Transactional(readOnly = true)
-    public GetUserRes getUser(Long userId) {
-        User user = userRepository.findByIdAndState(userId, ACTIVE)
-                .orElseThrow(() -> new BaseException(NOT_FIND_USER));
-
-        return new GetUserRes(user);
     }
 
     @Transactional(readOnly = true)
@@ -186,7 +173,7 @@ public class UserService {
 
         String encryptPwd;
         try {
-            encryptPwd = SHA256.encrypt(postLoginReq.getPassword());
+            encryptPwd = aes128.encrypt(postLoginReq.getPassword());
         } catch (Exception exception) {
             throw new BaseException(PASSWORD_ENCRYPTION_ERROR);
         }
@@ -315,9 +302,9 @@ public class UserService {
 
         PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         try{
-            Page<Chat> chatPage = chatRepository.findChat(jwtId, receiverId, ACTIVE, pageRequest);
+            Page<Chat> chatPage = chatRepository.findChat(sender.getId(), receiver.getId(), ACTIVE, pageRequest);
             Page<GetChatRes> dtoPage = chatPage.map(this::toDto);
-            System.out.println(dtoPage.getContent());
+
             return dtoPage.getContent();
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);

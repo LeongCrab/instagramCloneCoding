@@ -2,6 +2,7 @@ package com.example.demo.common.oauth;
 
 import com.example.demo.common.Constant;
 import com.example.demo.common.exceptions.BaseException;
+import com.example.demo.src.admin.model.GetUserRes;
 import com.example.demo.src.user.UserService;
 import com.example.demo.src.user.model.*;
 import com.example.demo.utils.JwtService;

@@ -42,40 +42,6 @@ public class UserController {
 
 
     /**
-     * 회원 조회 API
-     * [GET] /app/users
-     * 회원 번호 및 아이디 검색 조회 API
-     * [GET] /app/users? UserId=
-     * @return BaseResponse<List<GetUserRes>>
-     */
-    //Query String
-    @ResponseBody
-    @GetMapping("/users") // (GET) 127.0.0.1:9000/app/users
-    public BaseResponse<List<GetUserRes>> getUsers(@RequestParam(required = false) String userId) {
-        if(userId == null){
-            List<GetUserRes> getUsersRes = userService.getUsers();
-            return new BaseResponse<>(getUsersRes);
-        }
-        // Get Users
-        List<GetUserRes> getUsersRes = userService.getUsersByUserId(userId);
-        return new BaseResponse<>(getUsersRes);
-    }
-
-
-    /**
-     * 회원 1명 조회 API
-     * [GET] /app/users/:userId
-     * @return BaseResponse<GetUserRes>
-     */
-    @ResponseBody
-    @GetMapping("/users/{userId}") // (GET) 127.0.0.1:9000/app/users/:userId
-    public BaseResponse<GetUserRes> getUser(@PathVariable("userId") Long userId) {
-        GetUserRes getUserRes = userService.getUser(userId);
-        return new BaseResponse<>(getUserRes);
-    }
-
-
-    /**
      * 비밀번호 변경 API
      * [PATCH] /app/users/change-password
      * @return BaseResponse<String>
@@ -228,7 +194,7 @@ public class UserController {
     // Body
     @ResponseBody
     @PostMapping("/chat/{receiverId}")
-    public BaseResponse<String> createUser(@PathVariable("receiverId") Long receiverId,@Valid @RequestBody PostChatReq postChatReq) {
+    public BaseResponse<String> createUser(@PathVariable("receiverId") Long receiverId, @Valid @RequestBody PostChatReq postChatReq) {
         Long jwtId = jwtService.getId();
         userService.createChat(jwtId, receiverId, postChatReq);
 

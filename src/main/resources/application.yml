@@ -53,6 +53,9 @@ springdoc:
 jwt:
   secret-key: UwKYibQQgkW7g-*k.ap9kje-wxBHb9wdXoBT4vnt4P3sJWt-Nu # JWT key. 수정해주세요
 
+AES128:
+  secret-key: abcdefghijklmnop
+
 ---
 spring:
   config:
@@ -93,4 +96,3 @@ spring:
     properties:
       hibernate:
         format_sql: true
-
