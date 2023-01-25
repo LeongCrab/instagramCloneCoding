@@ -1,5 +1,6 @@
 package com.example.demo.src.user.model;
 
+import com.example.demo.src.user.entity.Chat;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,11 +15,11 @@ public class GetChatRes {
     private String createdAt;
 
     @Builder
-    public GetChatRes(Long id, Long senderId, Long receiverId, String text, LocalDateTime createdAt){
-        this.id = id;
-        this.senderId = senderId;
-        this.receiverId = receiverId;
-        this.text = text;
-        this.createdAt = createdAt.toString();
+    public GetChatRes(Chat chat){
+        this.id = chat.getId();
+        this.senderId = chat.getSender().getId();
+        this.receiverId = chat.getReceiver().getId();
+        this.text = chat.getText();
+        this.createdAt = chat.getCreatedAt().toString();
     }
 }

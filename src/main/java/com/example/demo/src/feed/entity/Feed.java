@@ -49,4 +49,8 @@ public class Feed extends BaseEntity {
     public void deleteFeed() {
         this.state = State.INACTIVE;
     }
+
+    public void banFeed() {
+        this.state = State.BANNED;
+    }
 }

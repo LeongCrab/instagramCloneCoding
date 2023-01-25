@@ -201,13 +201,9 @@ public class FeedService {
     public List<GetCommentRes> getCommentsByFeedId(long feedId) {
         List<Comment> commentList = commentRepository.findAllByIdAndState(feedId, ACTIVE);
 
-        return  commentList.stream().map(comment -> new GetCommentRes(
-                comment.getId(),
-                comment.getUser().getLoginId(),
-                comment.getCreatedAt(),
-                comment.getUpdatedAt(),
-                comment.getContent()
-        )).collect(Collectors.toList());
+        return  commentList.stream().
+                map(GetCommentRes::new)
+                .collect(Collectors.toList());
     }
 
     public void patchComment(long jwtId, long commentId, PostCommentReq postCommentReq) {

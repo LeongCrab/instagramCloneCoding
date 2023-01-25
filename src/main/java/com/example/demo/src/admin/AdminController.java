@@ -1,14 +1,12 @@
 package com.example.demo.src.admin;
 
-import com.example.demo.common.entity.BaseEntity.State;
+
 import com.example.demo.common.response.BaseResponse;
 import com.example.demo.src.admin.model.*;
-import com.example.demo.src.user.model.PatchUserReq;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -21,15 +19,13 @@ public class AdminController {
 
     /**
      * 회원 조회 API
-     * [GET] /admin/users
-     * 회원 번호 및 아이디 검색 조회 API
      * [GET] /admin/users?pageIndex=
      *
-     * @return BaseResponse<List < GetUserRes>>
+     * @return BaseResponse<List<GetUserRes>>
      */
     @ResponseBody
     @GetMapping("/users")
-    public BaseResponse<List<GetUserRes>> getUsers(@RequestParam int pageIndex, @Valid @RequestBody GetUserReq getUserReq) {
+    public BaseResponse<List<GetUserRes>> getUsers(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetUserReq getUserReq) {
         List<GetUserRes> getUserResList = adminService.getUsers(pageIndex, getUserReq);
 
         return new BaseResponse<>(getUserResList);
@@ -38,12 +34,12 @@ public class AdminController {
 
     /**
      * 회원 1명 아이디 검색 조회 API
-     * [GET] /admin/user/:userId
+     * [GET] /admin/users/:userId
      *
      * @return BaseResponse<GetUserInfoRes>
      */
     @ResponseBody
-    @GetMapping("/user/{userId}")
+    @GetMapping("/users/{userId}")
     public BaseResponse<GetUserInfoRes> getUser(@PathVariable("userId") Long userId) {
         GetUserInfoRes getUserInfoRes = adminService.getUser(userId);
 
@@ -53,16 +49,58 @@ public class AdminController {
 
     /**
      * 회원 정지 API
-     * [PATCH] /admin/user/ban/:userId
+     * [PATCH] /admin/users/:userId/ban
      *
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("/user/ban/{userId}")
+    @PatchMapping("/users/{userId}/ban")
     public BaseResponse<String> banUser(@PathVariable("userId") Long userId) {
         adminService.banUser(userId);
 
         String result = "회원 정지 완료";
+        return new BaseResponse<>(result);
+    }
+
+    /**
+     * 피드 조회 API
+     * [GET] /admin/feeds?pageIndex=
+     *
+     * @return BaseResponse<List<GetFeedRes>>
+     */
+    @ResponseBody
+    @GetMapping("/feeds")
+    public BaseResponse<List<GetFeedRes>> getFeeds(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetFeedReq getFeedReq) {
+        List<GetFeedRes> getFeedResList = adminService.getFeeds(pageIndex, getFeedReq);
+
+        return new BaseResponse<>(getFeedResList);
+    }
+
+    /**
+     * 피드 상세 조회 API
+     * [GET] /admin/feeds/:feedId
+     *
+     * @return BaseResponse<GetFeedInfoRes>
+     */
+    @ResponseBody
+    @GetMapping("/feeds/{feedId}")
+    public BaseResponse<GetFeedInfoRes> getFeed(@PathVariable("feedId") Long feedId) {
+        GetFeedInfoRes getFeedInfoRes = adminService.getFeed(feedId);
+
+        return new BaseResponse<>(getFeedInfoRes);
+    }
+
+    /**
+     * 피드 강제 삭제 API
+     * [PATCH] /admin/feeds/:feedId/ban
+     *
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/feeds/{feedId}/ban")
+    public BaseResponse<String> banFeed(@PathVariable("feedId") Long feedId) {
+        String result = adminService.banFeed(feedId);
+
         return new BaseResponse<>(result);
     }
 }

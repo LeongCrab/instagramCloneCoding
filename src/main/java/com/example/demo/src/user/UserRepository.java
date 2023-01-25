@@ -19,13 +19,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findById(Long id);
     Optional<User> findByLoginIdAndState(String loginId, State state);
     Optional<User> findByLoginId(String loginId);
-
+    Page<User> findAll(Pageable pageable);
     @Query("select u " +
             "from User u " +
             "where (:userName is null or u.name = :userName) " +
             "and (:userId is null or u.id = :userId) " +
             "and (:state is null or u.state = :state)" +
             "and (:createdAt is null or u.createdAt like concat(:createdAt,'%'))" )
-    Page<User> findAllUsers(@Param("userName") String userName, @Param("userId") Long userId, @Param("state") State state, @Param("createdAt") String createdAt, Pageable pageable);
+    Page<User> findUsers(@Param("userName") String userName, @Param("userId") Long userId, @Param("state") State state, @Param("createdAt") String createdAt, Pageable pageable);
 
 }

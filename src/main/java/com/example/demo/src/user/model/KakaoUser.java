@@ -36,9 +36,15 @@ public class KakaoUser {
                 .phone("NONE")
                 .name(this.getProperties().getNickname())
                 .loginType(Constant.LoginType.KAKAO)
-                .birthday(this.getKakao_account().getBirthday())
+                .birthday(birthdayFormat(this.getKakao_account().getBirthday()))
                 .birthYear("NONE")
                 .privacyExpiredAt(LocalDate.now().plusYears(1))
                 .build();
+    }
+
+    private String birthdayFormat(String str) {
+        return new StringBuffer(str)
+                .insert(2,'-')
+                .toString();
     }
 }

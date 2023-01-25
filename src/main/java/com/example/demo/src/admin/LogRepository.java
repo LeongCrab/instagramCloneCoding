@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface LogRepository extends JpaRepository<Log, Long> {
-    Optional<Log> findFirstByDataTypeAndMethodTypeAndUserIdOrderByCreatedAtDesc(Constant.DataType dataType, Constant.MethodType methodType, Long userId);
+    Optional<Log> findFirstByDataTypeAndUserIdOrderByCreatedAtDesc(Constant.DataType dataType, Long userId);
 }

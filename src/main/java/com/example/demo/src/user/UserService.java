@@ -308,23 +308,12 @@ public class UserService {
         PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         try{
             Page<Chat> chatPage = chatRepository.findChat(sender.getId(), receiver.getId(), ACTIVE, pageRequest);
-            Page<GetChatRes> dtoPage = chatPage.map(this::toDto);
+            Page<GetChatRes> dtoPage = chatPage.map(GetChatRes::new);
 
             return dtoPage.getContent();
         } catch (Exception exception) {
             throw new BaseException(DATABASE_ERROR);
         }
-
-    }
-
-    private GetChatRes toDto(Chat chat){
-        Long chatId = chat.getId();
-        Long senderId = chat.getSender().getId();
-        Long receiverId = chat.getReceiver().getId();
-        String text = chat.getText();
-        LocalDateTime createdAt = chat.getCreatedAt();
-
-        return new GetChatRes(chatId, senderId, receiverId, text, createdAt);
     }
 
 }
