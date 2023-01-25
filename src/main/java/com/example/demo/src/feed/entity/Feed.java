@@ -1,5 +1,7 @@
 package com.example.demo.src.feed.entity;
 
+import com.example.demo.common.Constant.FeedState;
+import com.example.demo.common.Constant.State;
 import com.example.demo.common.entity.BaseEntity;
 import com.example.demo.src.user.entity.User;
 import lombok.*;
@@ -32,6 +34,10 @@ public class Feed extends BaseEntity {
     @JoinColumn(name="userId")
     private User user;
 
+    @Enumerated(EnumType.STRING)
+    private FeedState feedState = FeedState.ACTIVE;
+
+
     @Builder
     public Feed(Long id, String content, boolean hasImage, boolean hasVideo, int numberOfFiles, User user) {
         this.id = id;
@@ -48,9 +54,11 @@ public class Feed extends BaseEntity {
 
     public void deleteFeed() {
         this.state = State.INACTIVE;
+        this.feedState = FeedState.DELETED;
     }
 
     public void banFeed() {
-        this.state = State.BANNED;
+        this.state = State.INACTIVE;
+        this.feedState = FeedState.BANNED;
     }
 }

@@ -37,7 +37,7 @@ public enum BaseResponseStatus {
     NOT_FIND_HEART(false,HttpStatus.NOT_FOUND.value(),"일치하는 좋아요가 없습니다."),
     NOT_FIND_COMMENT(false,HttpStatus.NOT_FOUND.value(),"일치하는 댓글이 없습니다."),
     INACTIVE_USER(false,HttpStatus.BAD_REQUEST.value(), "휴면 계정입니다"),
-    BANNED_USER(false,HttpStatus.BAD_REQUEST.value(), "차단된 계정입니다"),
+    BANNED_USER(false,HttpStatus.BAD_REQUEST.value(), "정지된 계정입니다"),
     DELETED_USER(false,HttpStatus.BAD_REQUEST.value(), "탈퇴한 계정입니다"),
     INVALID_OAUTH_TYPE(false, HttpStatus.BAD_REQUEST.value(), "알 수 없는 소셜 로그인 형식입니다."),
 

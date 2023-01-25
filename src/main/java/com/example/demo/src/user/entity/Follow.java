@@ -1,13 +1,11 @@
 package com.example.demo.src.user.entity;
 
+import com.example.demo.common.Constant.State;
 import com.example.demo.common.entity.BaseEntity;
-import com.example.demo.src.feed.entity.Feed;
 import lombok.*;
 
 import javax.persistence.*;
 
-import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
-import static com.example.demo.common.entity.BaseEntity.State.INACTIVE;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
@@ -36,6 +34,6 @@ public class Follow extends BaseEntity {
     }
 
     public void toggle() {
-        this.state = (this.state == INACTIVE) ? ACTIVE : INACTIVE;
+        this.state = (this.state == State.INACTIVE) ? State.ACTIVE : State.INACTIVE;
     }
 }

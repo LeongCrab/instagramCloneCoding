@@ -1,15 +1,13 @@
 package com.example.demo.src.user.entity;
 
 import com.example.demo.common.entity.BaseEntity;
-import com.example.demo.common.exceptions.BaseException;
-import com.example.demo.utils.AES128;
+
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 import static com.example.demo.common.Constant.*;
-import static com.example.demo.common.response.BaseResponseStatus.PASSWORD_ENCRYPTION_ERROR;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -54,6 +52,10 @@ public class User extends BaseEntity {
     @Column(name="profile_image")
     private String profileImage;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private UserState userState = UserState.ACTIVE;
+
     @Builder
     public User(Long id, String phone, String name, String loginId, String password, String birthday, String birthYear, LocalDate privacyExpiredAt, LoginType loginType) {
         this.id = id;
@@ -82,10 +84,12 @@ public class User extends BaseEntity {
     }
 
     public void deleteUser() {
-        this.state = State.DELETED;
+        this.state = State.INACTIVE;
+        this.userState = UserState.DELETED;
     }
 
     public void banUser() {
-        this.state = State.BANNED;
+        this.state = State.INACTIVE;
+        this.userState = UserState.BANNED;
     }
 }

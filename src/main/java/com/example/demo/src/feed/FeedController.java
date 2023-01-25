@@ -61,8 +61,8 @@ public class FeedController {
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @PatchMapping("")
-    public BaseResponse<String> modifyFeed(@PathVariable long feedId, @Valid @RequestBody PatchFeedReq patchFeedReq){
+    @PatchMapping("/{feedId}")
+    public BaseResponse<String> modifyFeed(@PathVariable("feedId") long feedId, @Valid @RequestBody PatchFeedReq patchFeedReq){
         Long jwtId = jwtService.getId();
 
         feedService.modifyFeed(jwtId, feedId, patchFeedReq);
@@ -73,12 +73,12 @@ public class FeedController {
 
     /**
      * 게시글 삭제 API
-     * [DELETE] /app/feeds/:feedId
+     * [PATCH] /app/feeds/:feedId/delete
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @DeleteMapping("")
-    public BaseResponse<String> deleteFeed(@PathVariable long feedId){
+    @PatchMapping("/{feedId}/delete")
+    public BaseResponse<String> deleteFeed(@PathVariable("feedId") long feedId){
         Long jwtId = jwtService.getId();
 
         feedService.deleteFeed(jwtId, feedId);
@@ -154,11 +154,11 @@ public class FeedController {
 
     /**
      * 댓글 삭제 API
-     * [DELETE] /app/feeds/:feedId/comment/:commentId
+     * [PATCH] /app/feeds/:feedId/comment/:commentId/delete
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @DeleteMapping("/{feedId}/comment/{commentId}")
+    @PatchMapping("/{feedId}/comment/{commentId}/delete")
     public BaseResponse<String> deleteComment(@PathVariable("commentId") long commentId) {
         Long jwtId = jwtService.getId();
         feedService.deleteComment(jwtId, commentId);

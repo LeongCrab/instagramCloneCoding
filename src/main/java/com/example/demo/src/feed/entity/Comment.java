@@ -7,7 +7,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-import static com.example.demo.common.entity.BaseEntity.State.INACTIVE;
+import static com.example.demo.common.Constant.State.INACTIVE;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)

@@ -21,7 +21,7 @@ public class GetFeedInfoRes {
     private String loginId;
     private String createdAt;
     private String updatedAt;
-    private String state;
+    private String feedState;
     private List<GetCommentRes> comments = new ArrayList<>();
 
     public GetFeedInfoRes(Feed feed, List<Comment> commentList) {
@@ -30,7 +30,7 @@ public class GetFeedInfoRes {
         this.loginId = feed.getUser().getLoginId();
         this.createdAt = feed.getCreatedAt().toString();
         this.updatedAt = feed.getUpdatedAt().toString();
-        this.state = feed.getState().toString();
+        this.feedState = feed.getFeedState().toString();
         for(Comment comment: commentList){
             this.comments.add(new GetCommentRes(comment));
         }

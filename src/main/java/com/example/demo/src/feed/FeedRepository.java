@@ -11,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-import static com.example.demo.common.entity.BaseEntity.*;
+import static com.example.demo.common.Constant.*;
 
 public interface FeedRepository extends JpaRepository<Feed, Long> {
     Page<Feed> findAllByState(State state, Pageable pageable);

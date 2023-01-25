@@ -23,7 +23,7 @@ public class GetUserInfoRes {
     private String profileImage;
     private String createdAt;
     private String updatedAt;
-    private String state;
+    private String userState;
     private String lastLogin;
 
     public GetUserInfoRes(User user, String lastLogin){
@@ -39,7 +39,7 @@ public class GetUserInfoRes {
         this.profileText = user.getProfileText();
         this.createdAt = user.getCreatedAt().toString();
         this.updatedAt = user.getUpdatedAt().toString();
-        this.state = user.getState().toString();
+        this.userState = user.getUserState().toString();
         this.lastLogin = lastLogin;
     }
 }

@@ -1,7 +1,9 @@
 package com.example.demo.src.user;
 
 
-import com.example.demo.common.Constant;
+import com.example.demo.common.Constant.State;
+import com.example.demo.common.Constant.DataType;
+import com.example.demo.common.Constant.MethodType;
 import com.example.demo.common.exceptions.BaseException;
 import com.example.demo.src.admin.LogRepository;
 import com.example.demo.src.admin.entity.Log;
@@ -25,13 +27,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
 import static com.example.demo.common.response.BaseResponseStatus.*;
 
 @Slf4j
@@ -51,7 +51,7 @@ public class UserService {
 
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
-        Optional<User> checkUser = userRepository.findByLoginIdAndState(postUserReq.getLoginId(), ACTIVE);
+        Optional<User> checkUser = userRepository.findByLoginIdAndState(postUserReq.getLoginId(), State.ACTIVE);
         if(checkUser.isPresent()){
             throw new BaseException(POST_USERS_EXISTS_LOGIN_ID);
         }
@@ -123,7 +123,7 @@ public class UserService {
     }
 
     public void updatePassword(Long userId, PatchUserReq patchUserReq) {
-        User user = userRepository.findByIdAndState(userId, ACTIVE)
+        User user = userRepository.findByIdAndState(userId, State.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
 
         String encryptPwd;
@@ -137,7 +137,7 @@ public class UserService {
     }
 
     public void updateProfile(Long userId, PatchProfileReq patchProfileReq) {
-        User user = userRepository.findByIdAndState(userId, ACTIVE)
+        User user = userRepository.findByIdAndState(userId, State.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
 
         String profileImage = patchProfileReq.getProfileImage();
@@ -147,14 +147,14 @@ public class UserService {
     }
 
     public void deleteUser(Long userId) {
-        User user = userRepository.findByIdAndState(userId, ACTIVE)
+        User user = userRepository.findByIdAndState(userId, State.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         user.deleteUser();
     }
 
     @Transactional(readOnly = true)
     public boolean checkUserByLoginId(String loginId) {
-        Optional<User> result = userRepository.findByLoginIdAndState(loginId, ACTIVE);
+        Optional<User> result = userRepository.findByLoginIdAndState(loginId, State.ACTIVE);
 
         return result.isPresent();
     }
@@ -163,7 +163,7 @@ public class UserService {
         User user = userRepository.findByLoginId(postLoginReq.getLoginId())
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         // 계정 상태에 따라 로그인 성공 여부 처리
-        switch(user.getState()) {
+        switch(user.getUserState()) {
             case ACTIVE:
                 break;
             case INACTIVE:
@@ -186,7 +186,7 @@ public class UserService {
             //개인정보 동의 기간 확인
             sendNotice(id);
             String jwt = jwtService.createJwt(id);
-            Log log = new Log(Constant.DataType.LOGIN, Constant.MethodType.CREATE, id);
+            Log log = new Log(DataType.LOGIN, MethodType.CREATE, id);
             logRepository.save(log);
             return new PostLoginRes(postLoginReq.getLoginId(), jwt);
         } else{
@@ -196,14 +196,14 @@ public class UserService {
     }
     @Transactional(readOnly = true)
     public GetUserRes getUserByLoginId(String loginId) {
-        User user = userRepository.findByLoginIdAndState(loginId, ACTIVE)
+        User user = userRepository.findByLoginIdAndState(loginId, State.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         sendNotice(user.getId());
         return new GetUserRes(user);
     }
 
     private void sendNotice(Long id){
-        User user = userRepository.findByIdAndState(id, ACTIVE)
+        User user = userRepository.findByIdAndState(id, State.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         if(LocalDate.now().isAfter(user.getPrivacyExpiredAt())) {
             log.warn("개인정보 동의 필요함");
@@ -222,9 +222,9 @@ public class UserService {
         if(followerId.equals(followingId)) {
             throw new BaseException(SELF_FOLLOW);
         }
-        User follower = userRepository.findByIdAndState(followerId, ACTIVE)
+        User follower = userRepository.findByIdAndState(followerId, State.ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
-        User following = userRepository.findByIdAndState(followingId, ACTIVE)
+        User following = userRepository.findByIdAndState(followingId, State.ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
 
         Follow follow = Follow.builder()
@@ -240,13 +240,13 @@ public class UserService {
     }
     @Transactional(readOnly = true)
     public GetMyPageRes getMyPage(long userId) {
-        User user = userRepository.findByIdAndState(userId, ACTIVE)
+        User user = userRepository.findByIdAndState(userId, State.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
 
         String loginId = user.getLoginId();
-        int feeds = feedRepository.countByUserIdAndState(userId, ACTIVE);
-        int followers = followRepository.countByFollowingIdAndState(userId, ACTIVE);
-        int followings = followRepository.countByFollowerIdAndState(userId, ACTIVE);
+        int feeds = feedRepository.countByUserIdAndState(userId, State.ACTIVE);
+        int followers = followRepository.countByFollowingIdAndState(userId, State.ACTIVE);
+        int followings = followRepository.countByFollowerIdAndState(userId, State.ACTIVE);
         String profileText = user.getProfileText();
         String profileImage = user.getProfileImage();
 
@@ -258,7 +258,7 @@ public class UserService {
         final int size = 9;
 
         PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<Feed> feedPage = feedRepository.findByUserIdAndState(userId, ACTIVE, pageRequest);
+        Page<Feed> feedPage = feedRepository.findByUserIdAndState(userId, State.ACTIVE, pageRequest);
 
         boolean hasNext = feedPage.hasNext();
         List<String> thumbnailList = new ArrayList<>();
@@ -269,7 +269,7 @@ public class UserService {
 
         for(Long feedId : feedIdList){
             try {
-                List<Image> imageList = imageRepository.findAllByFeedIdAndState(feedId, ACTIVE);
+                List<Image> imageList = imageRepository.findAllByFeedIdAndState(feedId, State.ACTIVE);
 
                 if(!imageList.isEmpty()) {
                     String thumbnail = imageList.get(0).getUrl();
@@ -283,9 +283,9 @@ public class UserService {
     }
 
     public void createChat(Long senderId, Long receiverId, PostChatReq postChatReq){
-        User sender = userRepository.findByIdAndState(senderId, ACTIVE)
+        User sender = userRepository.findByIdAndState(senderId, State.ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
-        User receiver = userRepository.findByIdAndState(receiverId, ACTIVE)
+        User receiver = userRepository.findByIdAndState(receiverId, State.ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
         String text = postChatReq.getText();
 
@@ -299,15 +299,15 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public List<GetChatRes> getChatList(int size, int pageIndex, Long jwtId, Long receiverId) {
-        User sender = userRepository.findByIdAndState(jwtId, ACTIVE)
+        User sender = userRepository.findByIdAndState(jwtId, State.ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
 
-        User receiver = userRepository.findByIdAndState(receiverId, ACTIVE)
+        User receiver = userRepository.findByIdAndState(receiverId, State.ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_USER));
 
         PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         try{
-            Page<Chat> chatPage = chatRepository.findChat(sender.getId(), receiver.getId(), ACTIVE, pageRequest);
+            Page<Chat> chatPage = chatRepository.findChat(sender.getId(), receiver.getId(), State.ACTIVE, pageRequest);
             Page<GetChatRes> dtoPage = chatPage.map(GetChatRes::new);
 
             return dtoPage.getContent();

@@ -56,9 +56,8 @@ public class AdminController {
     @ResponseBody
     @PatchMapping("/users/{userId}/ban")
     public BaseResponse<String> banUser(@PathVariable("userId") Long userId) {
-        adminService.banUser(userId);
+        String result = adminService.banUser(userId);
 
-        String result = "회원 정지 완료";
         return new BaseResponse<>(result);
     }
 
@@ -102,6 +101,20 @@ public class AdminController {
         String result = adminService.banFeed(feedId);
 
         return new BaseResponse<>(result);
+    }
+
+    /**
+     * 신고 조회 API
+     * [GET] /admin/reports?pageIndex=
+     *
+     * @return BaseResponse<List<GetReportRes>>
+     */
+    @ResponseBody
+    @GetMapping("/reports")
+    public BaseResponse<List<GetReportRes>> getReports(@RequestParam int pageIndex) {
+        List<GetReportRes> getReportResList = adminService.getReports(pageIndex);
+
+        return new BaseResponse<>(getReportResList);
     }
 }
 

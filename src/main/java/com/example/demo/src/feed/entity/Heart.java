@@ -6,7 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
-import static com.example.demo.common.entity.BaseEntity.State.*;
+import static com.example.demo.common.Constant.State;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
@@ -35,6 +35,6 @@ public class Heart extends BaseEntity {
     }
 
     public void toggle() {
-        this.state = (this.state == INACTIVE) ? ACTIVE : INACTIVE;
+        this.state = (this.state == State.INACTIVE) ? State.ACTIVE : State.INACTIVE;
     }
 }

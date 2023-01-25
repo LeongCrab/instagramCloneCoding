@@ -1,6 +1,6 @@
 package com.example.demo.src.feed;
 
-import com.example.demo.common.entity.BaseEntity.State;
+import com.example.demo.common.Constant.State;
 import com.example.demo.src.feed.entity.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -75,17 +75,17 @@ public class UserController {
 
 
     /**
-     * 유저 정보 삭제 API
-     * [DELETE] /app/users
+     * 유저 탈퇴 API
+     * [PATCH] /app/users
      * @return BaseResponse<String>
      */
     @ResponseBody
-    @DeleteMapping("/users")
+    @PatchMapping("/users/delete")
     public BaseResponse<String> deleteUser(){
         Long jwtId = jwtService.getId();
         userService.deleteUser(jwtId);
 
-        String result = "아이디 삭제 완료";
+        String result = "유저 탈퇴 완료";
         return new BaseResponse<>(result);
     }
 
@@ -105,7 +105,7 @@ public class UserController {
 
     /**
      * 유저 소셜 가입, 로그인 인증으로 리다이렉트 해주는 url
-     * [GET] /app/users/:socialLoginType/login
+     * [GET] /app/users/:loginType/login
      * @return void
      */
     @GetMapping("/users/{loginType}/login")

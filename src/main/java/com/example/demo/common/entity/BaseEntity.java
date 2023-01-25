@@ -1,5 +1,6 @@
 package com.example.demo.common.entity;
 
+import com.example.demo.common.Constant.State;
 import lombok.Getter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,7 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.MappedSuperclass;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 
 @Getter
@@ -17,18 +18,13 @@ public class BaseEntity {
 
     @CreationTimestamp
     @Column(name = "createdAt", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+    private Timestamp createdAt;
 
     @UpdateTimestamp
     @Column(name = "updatedAt", nullable = false)
-    private LocalDateTime updatedAt;
+    private Timestamp updatedAt;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "state", nullable = false, length = 10)
     protected State state = State.ACTIVE;
-
-    public enum State {
-        ACTIVE, INACTIVE, BANNED, DELETED
-    }
-
 }

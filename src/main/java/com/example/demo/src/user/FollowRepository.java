@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-import static com.example.demo.common.entity.BaseEntity.*;
+import com.example.demo.common.Constant.State;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
     Optional<Follow> findByFollowerIdAndFollowingId(long followerId, long followingId);

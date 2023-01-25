@@ -1,6 +1,6 @@
 package com.example.demo.src.user;
 
-import com.example.demo.common.entity.BaseEntity.State;
+import com.example.demo.common.Constant.State;
 import com.example.demo.src.user.entity.Chat;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

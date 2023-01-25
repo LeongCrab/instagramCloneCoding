@@ -1,6 +1,18 @@
 package com.example.demo.common;
 
 public class Constant {
+
+    public enum State {
+        ACTIVE, INACTIVE
+    }
+    public enum UserState {
+        ACTIVE, INACTIVE, DELETED, BANNED
+    }
+
+    public enum FeedState {
+        ACTIVE, INACTIVE, DELETED, BANNED
+    }
+
     public enum LoginType {
         ORIGINAL, GOOGLE, KAKAO, NAVER, APPLE
     }

@@ -2,15 +2,15 @@ package com.example.demo.src.admin;
 
 import com.example.demo.common.Constant.LoginType;
 import com.example.demo.common.Constant.DataType;
-import com.example.demo.common.Constant.MethodType;
-import com.example.demo.common.entity.BaseEntity.State;
+import com.example.demo.common.Constant.State;
 import com.example.demo.common.exceptions.BaseException;
-import com.example.demo.src.admin.entity.Log;
 import com.example.demo.src.admin.model.*;
 import com.example.demo.src.feed.CommentRepository;
 import com.example.demo.src.feed.FeedRepository;
+import com.example.demo.src.feed.ReportRepository;
 import com.example.demo.src.feed.entity.Comment;
 import com.example.demo.src.feed.entity.Feed;
+import com.example.demo.src.feed.entity.Report;
 import com.example.demo.src.user.UserRepository;
 import com.example.demo.src.user.entity.User;
 import com.example.demo.utils.AES128;
@@ -22,11 +22,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.List;
-import java.util.Optional;
 
 
-import static com.example.demo.common.entity.BaseEntity.State.ACTIVE;
 import static com.example.demo.common.response.BaseResponseStatus.*;
 
 
@@ -39,11 +38,12 @@ public class AdminService {
     private final FeedRepository feedRepository;
     private final LogRepository logRepository;
     private final CommentRepository commentRepository;
+    private final ReportRepository reportRepository;
     private final AES128 aes128;
+    private final int size = 10;
 
     @Transactional(readOnly = true)
     public List<GetUserRes> getUsers(int pageIndex, GetUserReq getUserReq){
-        final int size = 10;
         PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Page<User> userPage;
@@ -134,15 +134,15 @@ public class AdminService {
 
     }
 
-    public void banUser(Long userId) {
-        User user = userRepository.findByIdAndState(userId, ACTIVE)
+    public String banUser(Long userId) {
+        User user = userRepository.findByIdAndState(userId, State.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
         user.banUser();
+        return user.getId().toString() + "번 유저 정지 완료";
     }
 
     @Transactional(readOnly = true)
     public List<GetFeedRes> getFeeds(int pageIndex, GetFeedReq getFeedReq) {
-        final int size = 10;
         PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Page<Feed> feedPage;
@@ -180,5 +180,13 @@ public class AdminService {
 
         feed.banFeed();
         return feed.getId().toString() + "번 게시글과 관련 댓글 삭제 완료";
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetReportRes> getReports(int pageIndex) {
+        PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Report> reportPage = reportRepository.findAllByState(State.ACTIVE, pageRequest);
+        return reportPage.map(GetReportRes::new).getContent();
     }
 }
