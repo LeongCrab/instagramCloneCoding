@@ -56,13 +56,13 @@ public class FeedController {
     }
 
     /**
-     * 게시글 내용 변경 API
+     * 게시글 수정 API
      * [PATCH] /app/feeds/:feedId
      * @return BaseResponse<String>
      */
     @ResponseBody
     @PatchMapping("/{feedId}")
-    public BaseResponse<String> modifyFeed(@PathVariable("feedId") long feedId, @Valid @RequestBody PatchFeedReq patchFeedReq){
+    public BaseResponse<String> modifyFeed(@PathVariable("feedId") Long feedId, @Valid @RequestBody PatchFeedReq patchFeedReq){
         Long jwtId = jwtService.getId();
 
         feedService.modifyFeed(jwtId, feedId, patchFeedReq);
@@ -180,7 +180,7 @@ public class FeedController {
     }
 
     /**
-     * 게시글 신고 API
+     * 댓글 신고 API
      * [POST] /app/feeds/comment/:commentId/report
      * @return BaseResponse<String>
      */

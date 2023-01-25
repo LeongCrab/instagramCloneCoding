@@ -129,6 +129,7 @@ public class FeedService {
     public void modifyFeed(long jwtId, long feedId, PatchFeedReq patchFeedReq) throws BaseException{
         Feed feed = feedRepository.findByIdAndState(feedId, State.ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
+
         if(feed.getUser().getId().equals(jwtId)){
             feed.modifyFeed(patchFeedReq.getContent());
         } else {
@@ -227,6 +228,7 @@ public class FeedService {
         try {
             Report report = Report.builder()
                     .feed(feed)
+                    .type("Feed")
                     .reportReason(postReportReq.getReportReason())
                     .build();
             reportRepository.save(report);
@@ -253,6 +255,7 @@ public class FeedService {
         try {
             Report report = Report.builder()
                     .comment(comment)
+                    .type("Comment")
                     .reportReason(postReportReq.getReportReason())
                     .build();
             reportRepository.save(report);

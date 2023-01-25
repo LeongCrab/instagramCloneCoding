@@ -189,7 +189,7 @@ public class UserService {
             Log log = new Log(DataType.LOGIN, MethodType.CREATE, id);
             logRepository.save(log);
             return new PostLoginRes(postLoginReq.getLoginId(), jwt);
-        } else{
+        } else {
             throw new BaseException(FAILED_TO_LOGIN);
         }
 

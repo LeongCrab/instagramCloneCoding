@@ -22,17 +22,20 @@ public class Report extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ReportReason reportReason;
 
+    @Column
+    private String type;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "feedId")
     private Feed feed;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedId")
+    @JoinColumn(name = "commentId")
     private Comment comment;
 
     @Builder
-    public Report(long id, ReportReason reportReason, Feed feed, Comment comment){
+    public Report(long id, String type, ReportReason reportReason, Feed feed, Comment comment){
         this.id = id;
+        this.type = type;
         this.reportReason = reportReason;
         this.feed = feed;
         this.comment = comment;

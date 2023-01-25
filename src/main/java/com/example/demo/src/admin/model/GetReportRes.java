@@ -13,12 +13,14 @@ import lombok.Setter;
 public class GetReportRes {
     private Long id;
     private Long feedId;
+    private String type;
     private String loginId;
     private String reportReason;
     private String createAt;
 
     public GetReportRes(Report report) {
         this.id = report.getId();
+        this.type = report.getType();
         this.feedId = report.getFeed().getId();
         this.loginId = report.getFeed().getUser().getLoginId();
         this.reportReason = report.getReportReason().toString();
