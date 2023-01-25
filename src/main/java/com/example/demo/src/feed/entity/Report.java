@@ -26,10 +26,15 @@ public class Report extends BaseEntity {
     @JoinColumn(name = "feedId")
     private Feed feed;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "feedId")
+    private Comment comment;
+
     @Builder
-    public Report(long id, ReportReason reportReason, Feed feed){
+    public Report(long id, ReportReason reportReason, Feed feed, Comment comment){
         this.id = id;
         this.reportReason = reportReason;
         this.feed = feed;
+        this.comment = comment;
     }
 }

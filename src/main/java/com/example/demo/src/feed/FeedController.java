@@ -173,9 +173,22 @@ public class FeedController {
      */
     @ResponseBody
     @PostMapping("/{feedId}/report")
-    public BaseResponse<String> createReport(@PathVariable("feedId") long feedId, @RequestBody PostReportReq postReportReq) {
-        feedService.createReport(feedId, postReportReq);
-        String result = "신고 성공";
+    public BaseResponse<String> createFeedReport(@PathVariable("feedId") long feedId, @RequestBody PostReportReq postReportReq) {
+        feedService.createFeedReport(feedId, postReportReq);
+        String result = "게시물 신고 성공";
+        return new BaseResponse<>(result);
+    }
+
+    /**
+     * 게시글 신고 API
+     * [POST] /app/feeds/comment/:commentId/report
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PostMapping("/comment/{commentId}/report")
+    public BaseResponse<String> createCommentReport(@PathVariable("commentId") long commentId, @RequestBody PostReportReq postReportReq) {
+        feedService.createCommentReport(commentId, postReportReq);
+        String result = "댓글 신고 성공";
         return new BaseResponse<>(result);
     }
 }

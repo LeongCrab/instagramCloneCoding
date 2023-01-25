@@ -9,6 +9,7 @@ import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Optional<Comment> findByUserIdAndIdAndState(long userId, long id, State state);
+    Optional<Comment> findByIdAndState(long id, State state);
     int countByFeedIdAndState(long feedId, State state);
     List<Comment> findAllByIdAndState(long id, State state);
     List<Comment> findAllByFeedId(long feedId);

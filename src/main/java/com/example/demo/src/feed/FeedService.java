@@ -220,7 +220,7 @@ public class FeedService {
         comment.deleteComment();
     }
 
-    public void createReport(long feedId, PostReportReq postReportReq) {
+    public void createFeedReport(long feedId, PostReportReq postReportReq) {
         Feed feed = feedRepository.findByIdAndState(feedId, State.ACTIVE)
                 .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
 
@@ -242,8 +242,35 @@ public class FeedService {
         long feedId = feed.getId();
         int reports = reportRepository.countByFeedIdAndState(feedId, State.ACTIVE);
         if(reports > cut) {
-            feed.deleteFeed();
+            feed.hideFeed();
         }
     }
+
+    public void createCommentReport(long commentId, PostReportReq postReportReq) {
+        Comment comment = commentRepository.findByIdAndState(commentId, State.ACTIVE)
+                .orElseThrow(()-> new BaseException(NOT_FIND_COMMENT));
+
+        try {
+            Report report = Report.builder()
+                    .comment(comment)
+                    .reportReason(postReportReq.getReportReason())
+                    .build();
+            reportRepository.save(report);
+        } catch (Exception exception) {
+            throw new BaseException(ENUM_ERROR);
+        }
+
+        deleteReportedComment(comment);
+    }
+
+    private void deleteReportedComment(Comment comment) {
+        final int cut = 10;
+        long commentId = comment.getId();
+        int reports = reportRepository.countByCommentIdAndState(commentId, State.ACTIVE);
+        if(reports > cut) {
+            comment.hideComment();
+        }
+    }
+
 
 }

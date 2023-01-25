@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-@JsonPropertyOrder({"id", "loginId", "content", "createdAt", "updatedAt",})
+@JsonPropertyOrder({"id", "loginId", "content", "createdAt", "updatedAt", "state"})
 public class GetCommentRes {
     private Long id;
     private String loginId;

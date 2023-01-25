@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReportRepository extends JpaRepository<Report, Long> {
     int countByFeedIdAndState(long feedId, State state);
-
+    int countByCommentIdAndState(long commentId, State state);
     Page<Report> findAllByState(State state, Pageable pageable);
 }

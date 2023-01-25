@@ -40,11 +40,11 @@ public class AdminService {
     private final CommentRepository commentRepository;
     private final ReportRepository reportRepository;
     private final AES128 aes128;
-    private final int size = 10;
+    private final int pageSize = 10;
 
     @Transactional(readOnly = true)
     public List<GetUserRes> getUsers(int pageIndex, GetUserReq getUserReq){
-        PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Page<User> userPage;
         if(getUserReq == null){
@@ -143,7 +143,7 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public List<GetFeedRes> getFeeds(int pageIndex, GetFeedReq getFeedReq) {
-        PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Page<Feed> feedPage;
         if(getFeedReq == null) {
@@ -184,7 +184,7 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public List<GetReportRes> getReports(int pageIndex) {
-        PageRequest pageRequest = PageRequest.of(pageIndex, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         Page<Report> reportPage = reportRepository.findAllByState(State.ACTIVE, pageRequest);
         return reportPage.map(GetReportRes::new).getContent();

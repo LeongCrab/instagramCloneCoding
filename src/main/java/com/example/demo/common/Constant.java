@@ -10,7 +10,11 @@ public class Constant {
     }
 
     public enum FeedState {
-        ACTIVE, INACTIVE, DELETED, BANNED
+        ACTIVE, INVISIBLE, DELETED, BANNED
+    }
+
+    public enum CommentState {
+        ACTIVE, INVISIBLE, DELETED, BANNED
     }
 
     public enum LoginType {

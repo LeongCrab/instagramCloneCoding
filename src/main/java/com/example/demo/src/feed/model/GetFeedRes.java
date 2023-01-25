@@ -17,6 +17,7 @@ public class GetFeedRes {
     private Long id;
     private Long userId;
     private String createdAt;
+    private String updatedAt;
     private String content;
     private Boolean hasImage;
     private Boolean hasVideo;
@@ -30,6 +31,7 @@ public class GetFeedRes {
         this.id = feed.getId();
         this.userId = feed.getUser().getId();
         this.createdAt = feed.getCreatedAt().toString();
+        this.updatedAt = feed.getUpdatedAt().toString();
         this.content = feed.getContent();
         this.hasImage = feed.getHasImage();
         this.hasVideo = feed.getHasVideo();

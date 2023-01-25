@@ -51,7 +51,10 @@ public class Feed extends BaseEntity {
     public void modifyFeed(String content) {
         this.content = content;
     }
-
+    public void hideFeed() {
+        this.state = State.INACTIVE;
+        this.feedState = FeedState.INVISIBLE;
+    }
     public void deleteFeed() {
         this.state = State.INACTIVE;
         this.feedState = FeedState.DELETED;
