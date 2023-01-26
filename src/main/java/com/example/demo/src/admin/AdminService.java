@@ -189,4 +189,12 @@ public class AdminService {
         Page<Report> reportPage = reportRepository.findAllByState(State.ACTIVE, pageRequest);
         return reportPage.map(GetReportRes::new).getContent();
     }
+
+    public String deleteReport(Long reportId) {
+        Report report = reportRepository.findByIdAndState(reportId, State.ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_REPORT));
+
+        report.deleteReport();
+        return report.getId().toString() + "번 신고 삭제 완료";
+    }
 }

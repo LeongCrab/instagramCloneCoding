@@ -1,6 +1,7 @@
 package com.example.demo.src.feed.entity;
 
 
+import com.example.demo.common.Constant.State;
 import com.example.demo.common.Constant.ReportReason;
 import com.example.demo.common.entity.BaseEntity;
 import lombok.*;
@@ -41,7 +42,7 @@ public class Report extends BaseEntity {
         this.comment = comment;
     }
 
-    private class Entity<T> {
-
+    public void deleteReport() {
+        this.state = State.INACTIVE;
     }
 }

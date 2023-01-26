@@ -7,8 +7,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Optional;
+
 public interface ReportRepository extends JpaRepository<Report, Long> {
     int countByFeedIdAndState(long feedId, State state);
     int countByCommentIdAndState(long commentId, State state);
     Page<Report> findAllByState(State state, Pageable pageable);
+    Optional<Report> findByIdAndState(Long id, State state);
 }

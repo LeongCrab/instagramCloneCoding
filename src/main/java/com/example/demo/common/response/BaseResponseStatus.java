@@ -32,6 +32,7 @@ public enum BaseResponseStatus {
     NOT_FIND_LOG(false,HttpStatus.NOT_FOUND.value(),"일치하는 기록이 없습니다."),
     NOT_FIND_FOLLOW(false,HttpStatus.NOT_FOUND.value(),"일치하는 팔로우가 없습니다."),
     NOT_FIND_FEED(false,HttpStatus.NOT_FOUND.value(),"일치하는 게시물이 없습니다."),
+    NOT_FIND_REPORT(false,HttpStatus.NOT_FOUND.value(),"일치하는 신고가 없습니다."),
     NOT_FIND_CHAT(false,HttpStatus.NOT_FOUND.value(),"일치하는 채팅이 없습니다."),
     SELF_FOLLOW(false, HttpStatus.BAD_REQUEST.value(), "자기 자신을 팔로우 할 수 없습니다."),
     NOT_FIND_HEART(false,HttpStatus.NOT_FOUND.value(),"일치하는 좋아요가 없습니다."),

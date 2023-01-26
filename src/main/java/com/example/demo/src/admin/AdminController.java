@@ -33,7 +33,7 @@ public class AdminController {
 
 
     /**
-     * 회원 1명 아이디 검색 조회 API
+     * 회원 상세 조회 API
      * [GET] /admin/users/:userId
      *
      * @return BaseResponse<GetUserInfoRes>
@@ -115,6 +115,20 @@ public class AdminController {
         List<GetReportRes> getReportResList = adminService.getReports(pageIndex);
 
         return new BaseResponse<>(getReportResList);
+    }
+
+    /**
+     * 신고 삭제 API
+     * [GET] /admin/reports/:reportId/delete
+     *
+     * @return BaseResponse<String>
+     */
+    @ResponseBody
+    @PatchMapping("/reports/{reportId}/delete")
+    public BaseResponse<String> deleteReports(@PathVariable("reportId") Long reportId) {
+        String result = adminService.deleteReport(reportId);
+
+        return new BaseResponse<>(result);
     }
 }
 

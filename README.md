@@ -15,8 +15,7 @@ REST API를 처리하는 SpringBoot 프로젝트
   - `exceptions`: 예외처리 관리 폴더
   - `oauth`: Oauth 인증에 필요한 파일 관리 폴더
   - `response`: baseResponse를 관리하는 폴더
-  - `secret`: 보안과 관련된 파일 관리 폴더(차후 환경 변수로 분리 추천)
-  - `Constant`: 상수와 관련된 내용  
+  - `Constant`: 상수와 관련된 내용
 
 
 - 도메인 폴더 구조
@@ -68,27 +67,14 @@ api-server-spring-boot
         | ExceptionAdvice.java // ExceptionHandler를 활용하여 정의해놓은 예외처리를 통합 관리하는 클래스
       > oauth
         | GoogleOauth.java // Google OAuth 처리 클래스
+        | KakaoOauth.java // Kakao OAuth 처리 클래스
         | OAuthService.java // OAuth 공통 처리 서비스 클래스
         | SocialOauth.java // OAuth 공통 메소드 정의 인터페이스
       > response
         | BaseResponse.java // Controller 에서 Response 용으로 공통적으로 사용되는 구조를 위한 모델 클래스
         | BaseResponseStatus.java // Controller, Service에서 사용할 Response Status 관리 클래스 
-      > secret
-        | Secret.java // jwt 암호키 보관 클래스
       | Constant // 상수 보관 클래스
     > src
-      > test
-        > entity
-          | Comment.java // Comment Entity
-          | Memo.java // Memo Entity
-        > model
-          | GetMemoDto.java
-          | MemoDto.java
-          | PostCommentDto.java
-        | TestController.java // Memo API Controller
-        | TestService.java // Memo API Service
-        | MemoRepository.java // Memo Spring Data JPA
-        | CommentRepository.java // Comment Spring Data JPA
       > user
         > entity
           | User.java // User Entity
@@ -106,7 +92,7 @@ api-server-spring-boot
         | UserRepository.java
     > utils
       | JwtService.java // JWT 관련 클래스
-      | SHA256.java // 암호화 알고리즘 클래스
+      | AES128.java // 암호화 알고리즘 클래스
       | ValidateRegex.java // 정규표현식 관련 클래스
     | DemoApplication // SpringBootApplication 서버 시작 지점
   > resources
