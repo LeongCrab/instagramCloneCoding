@@ -25,7 +25,7 @@ public class Report extends BaseEntity {
     @Column
     private String type;
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "feedId")
+    @JoinColumn(name = "entityId")
     private Feed feed;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,5 +39,9 @@ public class Report extends BaseEntity {
         this.reportReason = reportReason;
         this.feed = feed;
         this.comment = comment;
+    }
+
+    private class Entity<T> {
+
     }
 }

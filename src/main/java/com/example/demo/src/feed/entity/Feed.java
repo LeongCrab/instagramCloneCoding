@@ -7,6 +7,8 @@ import com.example.demo.src.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
@@ -37,6 +39,11 @@ public class Feed extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private FeedState feedState = FeedState.ACTIVE;
 
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL)
+    private List<Image> imageList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL)
+    private List<Video> videoList = new ArrayList<>();
 
     @Builder
     public Feed(Long id, String content, boolean hasImage, boolean hasVideo, int numberOfFiles, User user) {

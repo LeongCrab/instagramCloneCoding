@@ -105,25 +105,8 @@ public class FeedService {
         Long feedId = feed.getId();
         int hearts = getHearts(feedId);
         int comments = getComments(feedId);
-        List<String> imageList = getImageList(feedId);
-        List<String> videoList = getVideoList(feedId);
 
-        return new GetFeedRes(feed, hearts, comments, imageList, videoList);
-    }
-
-    @Transactional(readOnly = true)
-    private List<String> getImageList(long feedId) {
-        List<Image> imageList = imageRepository.findAllByFeedIdAndState(feedId, State.ACTIVE);
-        return imageList.stream()
-                .map(Image::getUrl)
-                .collect(Collectors.toList());
-    }
-    @Transactional(readOnly = true)
-    private List<String> getVideoList(long feedId) {
-        List<Video> videoList = videoRepository.findAllByFeedIdAndState(feedId, State.ACTIVE);
-        return videoList.stream()
-                .map(Video::getUrl)
-                .collect(Collectors.toList());
+        return new GetFeedRes(feed, hearts, comments);
     }
 
     public void modifyFeed(long jwtId, long feedId, PatchFeedReq patchFeedReq) throws BaseException{
