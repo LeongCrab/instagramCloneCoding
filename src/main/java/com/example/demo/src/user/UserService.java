@@ -2,11 +2,7 @@ package com.example.demo.src.user;
 
 
 import com.example.demo.common.Constant.State;
-import com.example.demo.common.Constant.DataType;
-import com.example.demo.common.Constant.MethodType;
 import com.example.demo.common.exceptions.BaseException;
-import com.example.demo.src.admin.LogRepository;
-import com.example.demo.src.admin.entity.Log;
 import com.example.demo.src.admin.model.GetUserRes;
 import com.example.demo.src.feed.FeedRepository;
 import com.example.demo.src.feed.ImageRepository;
@@ -47,7 +43,6 @@ public class UserService {
     private final ImageRepository imageRepository;
     private final ChatRepository chatRepository;
     private final AES128 aes128;
-    private final LogRepository logRepository;
 
     public PostUserRes createUser(PostUserReq postUserReq) {
         //중복 체크
@@ -186,8 +181,7 @@ public class UserService {
             //개인정보 동의 기간 확인
             sendNotice(id);
             String jwt = jwtService.createJwt(id);
-            Log log = new Log(DataType.LOGIN, MethodType.CREATE, id);
-            logRepository.save(log);
+            user.updateLogin();
             return new PostLoginRes(postLoginReq.getLoginId(), jwt);
         } else {
             throw new BaseException(FAILED_TO_LOGIN);

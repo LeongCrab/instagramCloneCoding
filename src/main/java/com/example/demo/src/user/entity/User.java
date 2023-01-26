@@ -3,13 +3,15 @@ package com.example.demo.src.user.entity;
 import com.example.demo.common.entity.BaseEntity;
 
 import lombok.*;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 
 import static com.example.demo.common.Constant.*;
 
-
+@Audited
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
 @Getter
@@ -38,6 +40,9 @@ public class User extends BaseEntity {
 
     @Column
     private String birthYear;
+
+    @Column
+    private Timestamp lastLogin;
 
     @Column(nullable = false)
     private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
@@ -75,7 +80,11 @@ public class User extends BaseEntity {
 
     public void updatePassword(String password) {
         this.password = password;
+    }
 
+    public void updateLogin() {
+        Long datetime = System.currentTimeMillis();
+        this.lastLogin = new Timestamp(datetime);
     }
 
     public void updateProfile(String profileImage, String profileText){

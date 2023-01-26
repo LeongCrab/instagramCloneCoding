@@ -55,6 +55,9 @@ dependencies {
 
     // Swagger
     implementation ('org.springdoc:springdoc-openapi-ui:1.6.14')
+
+    // Hibernate Envers
+    implementation ('org.springframework.data:spring-data-envers')
 }
 
 test {

@@ -18,14 +18,15 @@ public class GetCommentRes {
     private String content;
     private String createdAt;
     private String updatedAt;
-    private String state;
+    private String commentState;
+
     public GetCommentRes(Comment comment){
         this.id = comment.getId();
         this.loginId = comment.getUser().getLoginId();
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt().toString();
         this.updatedAt = comment.getUpdatedAt().toString();
-        this.state = comment.getState().toString();
+        this.commentState = comment.getCommentState().toString();
 
     }
 }

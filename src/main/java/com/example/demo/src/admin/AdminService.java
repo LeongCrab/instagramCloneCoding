@@ -1,7 +1,6 @@
 package com.example.demo.src.admin;
 
 import com.example.demo.common.Constant.LoginType;
-import com.example.demo.common.Constant.DataType;
 import com.example.demo.common.Constant.State;
 import com.example.demo.common.exceptions.BaseException;
 import com.example.demo.src.admin.model.*;
@@ -36,7 +35,6 @@ import static com.example.demo.common.response.BaseResponseStatus.*;
 public class AdminService {
     private final UserRepository userRepository;
     private final FeedRepository feedRepository;
-    private final LogRepository logRepository;
     private final CommentRepository commentRepository;
     private final ReportRepository reportRepository;
     private final AES128 aes128;
@@ -97,8 +95,7 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     public GetUserInfoRes getOriginalUser(User user){
-        String lastLogin = getLastLogin(user);
-        GetUserInfoRes getUserInfoRes = new GetUserInfoRes(user, lastLogin);
+        GetUserInfoRes getUserInfoRes = new GetUserInfoRes(user);
 
         try {
             getUserInfoRes.setName(aes128.decrypt(user.getName()));
@@ -114,8 +111,7 @@ public class AdminService {
 
     @Transactional(readOnly = true)
     private GetUserInfoRes getKakaoUser(User user){
-        String lastLogin = getLastLogin(user);
-        GetUserInfoRes getUserInfoRes = new GetUserInfoRes(user, lastLogin);
+        GetUserInfoRes getUserInfoRes = new GetUserInfoRes(user);
         try {
             getUserInfoRes.setName(aes128.decrypt(user.getName()));
             getUserInfoRes.setBirthday(aes128.decrypt(user.getBirthday()));
@@ -126,13 +122,6 @@ public class AdminService {
         return getUserInfoRes;
     }
 
-    @Transactional(readOnly = true)
-    private String getLastLogin(User user){
-        return logRepository.findFirstByDataTypeAndUserIdOrderByCreatedAtDesc(DataType.LOGIN, user.getId())
-                .map(log -> log.getCreatedAt().toString())
-                .orElse(null);
-
-    }
 
     public String banUser(Long userId) {
         User user = userRepository.findByIdAndState(userId, State.ACTIVE)

@@ -119,7 +119,7 @@ public class AdminController {
 
     /**
      * 신고 삭제 API
-     * [GET] /admin/reports/:reportId/delete
+     * [PATCH] /admin/reports/:reportId/delete
      *
      * @return BaseResponse<String>
      */

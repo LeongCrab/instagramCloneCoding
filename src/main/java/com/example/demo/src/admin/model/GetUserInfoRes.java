@@ -26,7 +26,7 @@ public class GetUserInfoRes {
     private String userState;
     private String lastLogin;
 
-    public GetUserInfoRes(User user, String lastLogin){
+    public GetUserInfoRes(User user){
         this.id = user.getId();
         this.loginId = user.getLoginId();
         this.phone = user.getPhone();
@@ -40,7 +40,7 @@ public class GetUserInfoRes {
         this.createdAt = user.getCreatedAt().toString();
         this.updatedAt = user.getUpdatedAt().toString();
         this.userState = user.getUserState().toString();
-        this.lastLogin = lastLogin;
+        this.lastLogin = user.getLastLogin().toString();
     }
 }
 
