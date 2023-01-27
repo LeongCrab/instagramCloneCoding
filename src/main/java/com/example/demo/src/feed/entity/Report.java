@@ -6,6 +6,7 @@ import com.example.demo.common.Constant.ReportReason;
 import com.example.demo.common.entity.BaseEntity;
 import lombok.*;
 
+
 import javax.persistence.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)

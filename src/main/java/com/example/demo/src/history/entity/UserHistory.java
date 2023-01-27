@@ -1,9 +1,7 @@
-package com.example.demo.src.user.entity;
+package com.example.demo.src.history.entity;
 
 import com.example.demo.common.entity.BaseEntity;
 
-
-import com.example.demo.src.history.UserEntityListener;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,17 +10,19 @@ import java.time.LocalDate;
 
 import static com.example.demo.common.Constant.*;
 
-@EntityListeners(value = UserEntityListener.class)
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
 @Getter
 @Entity
-@Table(name = "USER")
-public class User extends BaseEntity {
+@Table(name = "USER_HISTORY")
+public class UserHistory extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private Long userId;
 
     @Column(nullable = false)
     private String phone;
@@ -43,7 +43,7 @@ public class User extends BaseEntity {
     private String birthYear;
 
     @Column
-    private Timestamp lastLogin;
+    private String lastLogin;
 
     @Column(nullable = false)
     private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
@@ -62,44 +62,21 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private UserState userState = UserState.ACTIVE;
 
+
     @Builder
-    public User(Long id, String phone, String name, String loginId, String password, String birthday, String birthYear, LocalDate privacyExpiredAt, LoginType loginType) {
+    public UserHistory(Long id, Long userId, String phone, String name, String loginId, String password, String birthday, String lastLogin, String birthYear, LocalDate privacyExpiredAt, LoginType loginType, String profileImage, String profileText) {
         this.id = id;
+        this.userId = userId;
         this.phone = phone;
         this.name = name;
         this.loginId = loginId;
         this.password = password;
         this.birthday = birthday;
         this.birthYear = birthYear;
+        this.lastLogin = lastLogin;
         this.privacyExpiredAt = privacyExpiredAt;
         this.loginType = loginType;
-    }
-    public void encryptOAuthUser(String encryptName, String encryptBirthday) {
-        this.name = encryptName;
-        this.birthday = encryptBirthday;
-    }
-
-    public void updatePassword(String password) {
-        this.password = password;
-    }
-
-    public void updateLogin() {
-        long datetime = System.currentTimeMillis();
-        this.lastLogin = new Timestamp(datetime);
-    }
-
-    public void updateProfile(String profileImage, String profileText){
         this.profileImage = profileImage;
         this.profileText = profileText;
-    }
-
-    public void deleteUser() {
-        this.state = State.INACTIVE;
-        this.userState = UserState.DELETED;
-    }
-
-    public void banUser() {
-        this.state = State.INACTIVE;
-        this.userState = UserState.BANNED;
     }
 }

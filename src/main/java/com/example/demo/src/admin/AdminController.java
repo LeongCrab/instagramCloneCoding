@@ -3,6 +3,7 @@ package com.example.demo.src.admin;
 
 import com.example.demo.common.response.BaseResponse;
 import com.example.demo.src.admin.model.*;
+import com.example.demo.src.history.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -129,6 +130,62 @@ public class AdminController {
         String result = adminService.deleteReport(reportId);
 
         return new BaseResponse<>(result);
+    }
+
+    /**
+     * 회원 히스토리 조회 API
+     * [GET] /admin/histories/users?pageIndex=
+     *
+     * @return BaseResponse<List<GetUserHistoryRes>>
+     */
+    @ResponseBody
+    @GetMapping("/history/users")
+    public BaseResponse<List<GetUserHistoryRes>> getUserHistory(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetHistoryReq getHistoryReq) {
+        List<GetUserHistoryRes> GetUserHistoryResList = adminService.getUserHistory(pageIndex, getHistoryReq);
+
+        return new BaseResponse<>(GetUserHistoryResList);
+    }
+
+    /**
+     * 게시글 히스토리 조회 API
+     * [GET] /admin/history/feeds?pageIndex=
+     *
+     * @return BaseResponse<List<GetFeedHistoryRes>>
+     */
+    @ResponseBody
+    @GetMapping("/history/feeds")
+    public BaseResponse<List<GetFeedHistoryRes>> getFeedHistory(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetHistoryReq getHistoryReq) {
+        List<GetFeedHistoryRes> GetFeedHistoryResList = adminService.getFeedHistory(pageIndex, getHistoryReq);
+
+        return new BaseResponse<>(GetFeedHistoryResList);
+    }
+
+    /**
+     * 댓글 히스토리 조회 API
+     * [GET] /admin/history/comments?pageIndex=
+     *
+     * @return BaseResponse<List<GetCommentHistoryRes>>
+     */
+    @ResponseBody
+    @GetMapping("/history/comments")
+    public BaseResponse<List<GetCommentHistoryRes>> getCommentHistory(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetHistoryReq getHistoryReq) {
+        List<GetCommentHistoryRes> GetCommentHistoryResList = adminService.getCommentHistory(pageIndex, getHistoryReq);
+
+        return new BaseResponse<>(GetCommentHistoryResList);
+    }
+
+    /**
+     * 신고 조회 API
+     * [GET] /admin/history/reports?pageIndex=
+     *
+     * @return BaseResponse<List<GetReportRes>>
+     */
+    @ResponseBody
+    @GetMapping("/history/reports")
+    public BaseResponse<List<GetReportHistoryRes>> getReports(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetHistoryReq getHistoryReq) {
+        List<GetReportHistoryRes> getReportHistoryResResList = adminService.getReportHistory(pageIndex, getHistoryReq);
+
+        return new BaseResponse<>(getReportHistoryResResList);
     }
 }
 

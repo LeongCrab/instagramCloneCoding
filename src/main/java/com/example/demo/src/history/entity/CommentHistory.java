@@ -1,25 +1,25 @@
-package com.example.demo.src.feed.entity;
+package com.example.demo.src.history.entity;
 
-import com.example.demo.common.Constant.State;
 import com.example.demo.common.Constant.CommentState;
 import com.example.demo.common.entity.BaseEntity;
-import com.example.demo.src.history.CommentEntityListener;
+import com.example.demo.src.feed.entity.Feed;
 import com.example.demo.src.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.Size;
 
-@EntityListeners(value = CommentEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
 @Getter
 @Entity
-@Table(name = "COMMENT")
-public class Comment extends BaseEntity {
+@Table(name = "COMMENT_HISTORY")
+public class CommentHistory extends BaseEntity {
     @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long commentId;
 
     @Column(nullable = false)
     private String content;
@@ -37,24 +37,12 @@ public class Comment extends BaseEntity {
     private CommentState commentState = CommentState.ACTIVE;
 
     @Builder
-    public Comment(long id, String content, User user, Feed feed){
+    public CommentHistory(Long id, Long commentId, String content, User user, Feed feed, CommentState commentState){
         this.id = id;
+        this.commentId = commentId;
         this.content = content;
         this.user = user;
         this.feed = feed;
-    }
-
-    public void patchComment(String content) {
-        this.content = content;
-    }
-
-    public void deleteComment() {
-        this.state = State.INACTIVE;
-        this.commentState = CommentState.DELETED;
-    }
-
-    public void hideComment() {
-        this.state = State.INACTIVE;
-        this.commentState = CommentState.INVISIBLE;
+        this.commentState = commentState;
     }
 }

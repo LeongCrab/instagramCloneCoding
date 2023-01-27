@@ -12,6 +12,13 @@ import com.example.demo.src.feed.ReportRepository;
 import com.example.demo.src.feed.entity.Comment;
 import com.example.demo.src.feed.entity.Feed;
 import com.example.demo.src.feed.entity.Report;
+import com.example.demo.src.history.CommentHistoryRepository;
+import com.example.demo.src.history.FeedHistoryRepository;
+import com.example.demo.src.history.UserHistoryRepository;
+import com.example.demo.src.history.entity.CommentHistory;
+import com.example.demo.src.history.entity.FeedHistory;
+import com.example.demo.src.history.entity.UserHistory;
+import com.example.demo.src.history.model.*;
 import com.example.demo.src.user.UserRepository;
 import com.example.demo.src.user.entity.User;
 import com.example.demo.utils.AES128;
@@ -40,6 +47,9 @@ public class AdminService {
     private final CommentRepository commentRepository;
     private final ReportRepository reportRepository;
     private final AES128 aes128;
+    private final UserHistoryRepository userHistoryRepository;
+    private final FeedHistoryRepository feedHistoryRepository;
+    private final CommentHistoryRepository commentHistoryRepository;
     private final int pageSize = 10;
 
     @Transactional(readOnly = true)
@@ -175,5 +185,34 @@ public class AdminService {
 
         report.deleteReport();
         return report.getId().toString() + "번 신고 삭제 완료";
+    }
+    @Transactional(readOnly = true)
+    public List<GetUserHistoryRes> getUserHistory(int pageIndex, GetHistoryReq getHistoryReq) {
+        PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<UserHistory> userHistoryPage = userHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+
+        return userHistoryPage.map(GetUserHistoryRes::new).getContent();
+    }
+    @Transactional(readOnly = true)
+    public List<GetFeedHistoryRes> getFeedHistory(int pageIndex, GetHistoryReq getHistoryReq) {
+        PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<FeedHistory> feedHistoryPage = feedHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+
+        return feedHistoryPage.map(GetFeedHistoryRes::new).getContent();
+    }
+    @Transactional(readOnly = true)
+    public List<GetCommentHistoryRes> getCommentHistory(int pageIndex, GetHistoryReq getHistoryReq) {
+        PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<CommentHistory> commentHistoryPage = commentHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(),pageRequest);
+
+        return commentHistoryPage.map(GetCommentHistoryRes::new).getContent();
+    }
+
+    @Transactional(readOnly = true)
+    public List<GetReportHistoryRes> getReportHistory(int pageIndex, GetHistoryReq getHistoryReq) {
+        PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+        Page<Report> reportPage = reportRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+        return reportPage.map(GetReportHistoryRes::new).getContent();
     }
 }

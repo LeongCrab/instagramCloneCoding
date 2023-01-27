@@ -1,8 +1,10 @@
 package com.example.demo.src.feed.entity;
 
+
 import com.example.demo.common.Constant.FeedState;
 import com.example.demo.common.Constant.State;
 import com.example.demo.common.entity.BaseEntity;
+import com.example.demo.src.history.FeedEntityListener;
 import com.example.demo.src.user.entity.User;
 import lombok.*;
 
@@ -10,6 +12,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@EntityListeners(value = FeedEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = false)
 @Getter
