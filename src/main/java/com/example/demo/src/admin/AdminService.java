@@ -189,21 +189,39 @@ public class AdminService {
     @Transactional(readOnly = true)
     public List<GetUserHistoryRes> getUserHistory(int pageIndex, GetHistoryReq getHistoryReq) {
         PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<UserHistory> userHistoryPage = userHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+
+        Page<UserHistory> userHistoryPage;
+        if(getHistoryReq == null) {
+            userHistoryPage = userHistoryRepository.findAll(pageRequest);
+        } else {
+            userHistoryPage = userHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+        }
 
         return userHistoryPage.map(GetUserHistoryRes::new).getContent();
     }
     @Transactional(readOnly = true)
     public List<GetFeedHistoryRes> getFeedHistory(int pageIndex, GetHistoryReq getHistoryReq) {
         PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<FeedHistory> feedHistoryPage = feedHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+
+        Page<FeedHistory> feedHistoryPage;
+        if(getHistoryReq == null) {
+            feedHistoryPage = feedHistoryRepository.findAll(pageRequest);
+        } else {
+            feedHistoryPage = feedHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+        }
 
         return feedHistoryPage.map(GetFeedHistoryRes::new).getContent();
     }
     @Transactional(readOnly = true)
     public List<GetCommentHistoryRes> getCommentHistory(int pageIndex, GetHistoryReq getHistoryReq) {
         PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
-        Page<CommentHistory> commentHistoryPage = commentHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(),pageRequest);
+
+        Page<CommentHistory> commentHistoryPage;
+        if(getHistoryReq == null) {
+            commentHistoryPage = commentHistoryRepository.findAll(pageRequest);
+        } else {
+            commentHistoryPage = commentHistoryRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(),pageRequest);
+        }
 
         return commentHistoryPage.map(GetCommentHistoryRes::new).getContent();
     }
@@ -212,7 +230,13 @@ public class AdminService {
     public List<GetReportHistoryRes> getReportHistory(int pageIndex, GetHistoryReq getHistoryReq) {
         PageRequest pageRequest = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<Report> reportPage = reportRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+        Page<Report> reportPage;
+        if(getHistoryReq == null) {
+            reportPage = reportRepository.findAll(pageRequest);
+        } else {
+            reportPage = reportRepository.findAllByPeriod(getHistoryReq.getStart(), getHistoryReq.getEnd(), pageRequest);
+        }
+
         return reportPage.map(GetReportHistoryRes::new).getContent();
     }
 }
