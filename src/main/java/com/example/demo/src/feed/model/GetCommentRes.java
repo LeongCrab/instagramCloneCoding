@@ -1,12 +1,12 @@
 package com.example.demo.src.feed.model;
 
+import com.example.demo.common.Constant.CommentState;
 import com.example.demo.src.feed.entity.Comment;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -18,7 +18,7 @@ public class GetCommentRes {
     private String content;
     private String createdAt;
     private String updatedAt;
-    private String commentState;
+    private CommentState commentState;
 
     public GetCommentRes(Comment comment){
         this.id = comment.getId();
@@ -26,7 +26,7 @@ public class GetCommentRes {
         this.content = comment.getContent();
         this.createdAt = comment.getCreatedAt().toString();
         this.updatedAt = comment.getUpdatedAt().toString();
-        this.commentState = comment.getCommentState().toString();
+        this.commentState = comment.getCommentState();
 
     }
 }

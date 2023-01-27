@@ -132,7 +132,6 @@ public class FeedController {
     @ResponseBody
     @GetMapping("/{feedId}/comments")
     public BaseResponse<List<GetCommentRes>> getComment(@PathVariable("feedId") long feedId) {
-        Long jwtId = jwtService.getId();
         List<GetCommentRes> getCommentResList = feedService.getCommentsByFeedId(feedId);
 
         return new BaseResponse<>(getCommentResList);

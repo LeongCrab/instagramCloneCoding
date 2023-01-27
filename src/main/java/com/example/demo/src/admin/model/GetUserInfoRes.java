@@ -3,8 +3,6 @@ package com.example.demo.src.admin.model;
 import com.example.demo.src.user.entity.User;
 import lombok.*;
 
-import java.time.LocalDateTime;
-
 
 @Getter
 @Setter
@@ -40,7 +38,12 @@ public class GetUserInfoRes {
         this.createdAt = user.getCreatedAt().toString();
         this.updatedAt = user.getUpdatedAt().toString();
         this.userState = user.getUserState().toString();
-        this.lastLogin = user.getLastLogin().toString();
+
+        if(user.getLastLogin()!= null) {
+            this.lastLogin = user.getLastLogin().toString();
+        } else {
+            this.lastLogin = null;
+        }
     }
 }
 

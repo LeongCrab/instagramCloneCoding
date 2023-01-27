@@ -1,6 +1,7 @@
 package com.example.demo.src.user;
 
 
+import com.example.demo.common.Constant;
 import com.example.demo.common.Constant.State;
 import com.example.demo.common.exceptions.BaseException;
 import com.example.demo.src.admin.model.GetUserRes;
@@ -80,7 +81,7 @@ public class UserService {
         }
 
         try {
-            String encryptBirthYear = aes128.encrypt(postUserReq.getBirthYear().toString());
+            String encryptBirthYear = aes128.encrypt(postUserReq.getBirthYear());
             postUserReq.setBirthYear(encryptBirthYear);
         } catch (Exception exception) {
             throw new BaseException(BIRTHYEAR_ENCRYPTION_ERROR);
@@ -121,6 +122,10 @@ public class UserService {
         User user = userRepository.findByIdAndState(userId, State.ACTIVE)
                 .orElseThrow(() -> new BaseException(NOT_FIND_USER));
 
+        //소셜 로그인 계정은 비밀번호가 없어, 자체 가입 유저만 비밀번호 변경 가능
+        if(user.getLoginType() != Constant.LoginType.ORIGINAL){
+            throw new BaseException(INVALID_TYPE);
+        }
         String encryptPwd;
         try{
             encryptPwd = aes128.encrypt(patchUserReq.getPassword());

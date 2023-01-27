@@ -2,6 +2,7 @@ package com.example.demo.src.feed.model;
 
 
 import com.example.demo.common.Constant.ReportReason;
+import com.example.demo.utils.ValidEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +16,6 @@ import javax.persistence.Enumerated;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostReportReq {
-    @Enumerated(EnumType.STRING)
+    @ValidEnum(enumClass = ReportReason.class)
     private ReportReason reportReason;
 }

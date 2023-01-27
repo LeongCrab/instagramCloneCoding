@@ -22,16 +22,6 @@ public class Feed extends BaseEntity {
     private Long id;
     @Column
     private String content;
-
-    @Column(nullable = false)
-    private Boolean hasImage;
-
-    @Column(nullable = false)
-    private Boolean hasVideo;
-
-    @Column(nullable = false)
-    private Integer numberOfFiles;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="userId")
     private User user;
@@ -45,13 +35,13 @@ public class Feed extends BaseEntity {
     @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL)
     private List<Video> videoList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "feed", cascade = CascadeType.ALL)
+    private List<Comment> commentList = new ArrayList<>();
+
     @Builder
-    public Feed(Long id, String content, boolean hasImage, boolean hasVideo, int numberOfFiles, User user) {
+    public Feed(Long id, String content, User user) {
         this.id = id;
         this.content = content;
-        this.hasImage = hasImage;
-        this.hasVideo = hasVideo;
-        this.numberOfFiles = numberOfFiles;
         this.user = user;
     }
 

@@ -106,7 +106,7 @@ public class UserController {
     /**
      * 유저 소셜 가입, 로그인 인증으로 리다이렉트 해주는 url
      * [GET] /app/users/:loginType/login
-     * @return void
+     *
      */
     @GetMapping("/users/{loginType}/login")
     public void loginRedirect(@PathVariable(name="loginType") String loginPath) throws IOException {

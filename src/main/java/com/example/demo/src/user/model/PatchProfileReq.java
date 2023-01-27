@@ -12,6 +12,6 @@ import javax.validation.constraints.Size;
 
 public class PatchProfileReq {
     private String profileImage;
-    @Size(max=200, message = "[profile] 200자까지 입력 가능합니다.")
+    @Size(max=200, message = "프로필 소개는 200자까지 입력 가능합니다.")
     private String profileText;
 }

@@ -16,15 +16,12 @@ public class PostFeedReq {
     private String content;
     @Size(max= 10, message = "게시글 사진은 최대 10개까지 등록 가능합니다.")
     private List<String> imageList = new ArrayList<>();
-    @Size(max= 10, message = "게시글 동영상은 최대 10개까지 등록 가능합니다.")
+    @Size(max= 10, message = "게시글 영상은 최대 10개까지 등록 가능합니다.")
     private List<String> videoList = new ArrayList<>();
 
     public Feed toEntity(User user) {
         return Feed.builder()
                 .content(this.content)
-                .hasImage(!this.imageList.isEmpty())
-                .hasVideo(!this.videoList.isEmpty())
-                .numberOfFiles(this.imageList.size() + this.videoList.size())
                 .user(user)
                 .build();
     }

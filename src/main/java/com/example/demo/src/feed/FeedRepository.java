@@ -24,9 +24,9 @@ public interface FeedRepository extends JpaRepository<Feed, Long> {
     @Query("select f " +
             "from Feed f " +
             "where (:loginId is null or f.user.loginId = :loginId) " +
-            "and (:state is null or f.state = :state)" +
+            "and (:feedState is null or f.feedState = :feedState)" +
             "and (:createdAt is null or f.createdAt like concat(:createdAt,'%'))" )
-    Page<Feed> findFeeds(@Param("loginId") String loginId, @Param("state") State state, @Param("createdAt") String createdAt, Pageable pageable);
+    Page<Feed> findFeeds(@Param("loginId") String loginId, @Param("feedState") FeedState feedState, @Param("createdAt") String createdAt, Pageable pageable);
 
     Optional<Feed> findById(Long id);
 }

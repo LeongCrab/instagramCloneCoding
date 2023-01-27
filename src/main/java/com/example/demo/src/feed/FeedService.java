@@ -57,7 +57,6 @@ public class FeedService {
                     .feed(feed)
                     .build();
             imageRepository.save(image);
-            log.info("추가된 사진 id :" + image.getId());
         }
     }
 
@@ -69,7 +68,6 @@ public class FeedService {
                     .feed(feed)
                     .build();
             videoRepository.save(video);
-            log.info("추가된 영상 id :" + video.getId());
         }
     }
     @Transactional(readOnly = true)
@@ -104,9 +102,8 @@ public class FeedService {
     private GetFeedRes toDto(Feed feed) {
         Long feedId = feed.getId();
         int hearts = getHearts(feedId);
-        int comments = getComments(feedId);
 
-        return new GetFeedRes(feed, hearts, comments);
+        return new GetFeedRes(feed, hearts);
     }
 
     public void modifyFeed(long jwtId, long feedId, PatchFeedReq patchFeedReq) throws BaseException{
@@ -175,18 +172,15 @@ public class FeedService {
     private int getHearts(long feedId) {
         return heartRepository.countByFeedIdAndState(feedId, State.ACTIVE);
     }
-    @Transactional(readOnly = true)
-    private int getComments(long feedId) {
-        return commentRepository.countByFeedIdAndState(feedId, State.ACTIVE);
-    }
-
 
     @Transactional(readOnly = true)
     public List<GetCommentRes> getCommentsByFeedId(long feedId) {
-        List<Comment> commentList = commentRepository.findAllByIdAndState(feedId, State.ACTIVE);
+        Feed feed = feedRepository.findByIdAndState(feedId, State.ACTIVE)
+                .orElseThrow(() -> new BaseException(NOT_FIND_FEED));
+        List<Comment> commentList = feed.getCommentList();
 
-        return  commentList.stream().
-                map(GetCommentRes::new)
+        return  commentList.stream()
+                .map(GetCommentRes::new)
                 .collect(Collectors.toList());
     }
 

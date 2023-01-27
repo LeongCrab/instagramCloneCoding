@@ -18,7 +18,7 @@ import static com.example.demo.common.Constant.*;
 @Entity
 @Table(name = "USER")
 public class User extends BaseEntity {
-    @Id // PK를 의미하는 어노테이션
+    @Id
     @Column(name = "id", nullable = false, updatable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -49,12 +49,12 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private LoginType loginType = LoginType.ORIGINAL;
+    private LoginType loginType;
 
-    @Column(name="profile_text")
+    @Column
     private String profileText;
 
-    @Column(name="profile_image")
+    @Column
     private String profileImage;
 
     @Column
@@ -83,7 +83,7 @@ public class User extends BaseEntity {
     }
 
     public void updateLogin() {
-        Long datetime = System.currentTimeMillis();
+        long datetime = System.currentTimeMillis();
         this.lastLogin = new Timestamp(datetime);
     }
 

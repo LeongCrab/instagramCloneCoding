@@ -22,17 +22,17 @@ public class GetFeedInfoRes {
     private String createdAt;
     private String updatedAt;
     private String feedState;
-    private List<GetCommentRes> comments = new ArrayList<>();
+    private List<GetCommentRes> commentList = new ArrayList<>();
 
-    public GetFeedInfoRes(Feed feed, List<Comment> commentList) {
+    public GetFeedInfoRes(Feed feed) {
         this.id = feed.getId();
         this.content = feed.getContent();
         this.loginId = feed.getUser().getLoginId();
         this.createdAt = feed.getCreatedAt().toString();
         this.updatedAt = feed.getUpdatedAt().toString();
         this.feedState = feed.getFeedState().toString();
-        for(Comment comment: commentList){
-            this.comments.add(new GetCommentRes(comment));
+        for(Comment comment: feed.getCommentList()){
+            this.commentList.add(new GetCommentRes(comment));
         }
     }
 }

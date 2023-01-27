@@ -1,5 +1,7 @@
 package com.example.demo.src.admin;
 
+import com.example.demo.common.Constant.FeedState;
+import com.example.demo.common.Constant.UserState;
 import com.example.demo.common.Constant.LoginType;
 import com.example.demo.common.Constant.State;
 import com.example.demo.common.exceptions.BaseException;
@@ -50,24 +52,13 @@ public class AdminService {
         } else {
             String userName = encryptName(getUserReq.getUserName());
             Long userId = getUserReq.getUserId();
-            State state = modifyState(getUserReq.getState());
+            UserState userState = getUserReq.getUserState();
             String createdAt = getUserReq.getCreatedAt();
 
-            userPage = userRepository.findUsers(userName, userId, state, createdAt, pageRequest);
+            userPage = userRepository.findUsers(userName, userId, userState, createdAt, pageRequest);
         }
 
         return userPage.map(GetUserRes::new).getContent();
-    }
-
-    private State modifyState(String state) {
-        if(state == null) {
-            return null;
-        }
-        try {
-           return State.valueOf(state.toUpperCase());
-        } catch (IllegalArgumentException exception) {
-            throw new BaseException(ENUM_ERROR);
-        }
     }
 
     private String encryptName(String name) {
@@ -139,10 +130,10 @@ public class AdminService {
             feedPage = feedRepository.findAll(pageRequest);
         } else {
             String loginId = getFeedReq.getLoginId();
-            State state = modifyState(getFeedReq.getState());
+            FeedState feedstate = getFeedReq.getFeedState();
             String createdAt = getFeedReq.getCreatedAt();
 
-            feedPage = feedRepository.findFeeds(loginId, state, createdAt, pageRequest);
+            feedPage = feedRepository.findFeeds(loginId, feedstate, createdAt, pageRequest);
         }
 
         return feedPage.map(GetFeedRes::new).getContent();
@@ -153,9 +144,7 @@ public class AdminService {
         Feed feed = feedRepository.findById(feedId)
                 .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
 
-        List<Comment> commentList = commentRepository.findAllByFeedId(feed.getId());
-
-        return new GetFeedInfoRes(feed, commentList);
+        return new GetFeedInfoRes(feed);
     }
 
     public String banFeed(Long feedId) {
@@ -163,6 +152,7 @@ public class AdminService {
                 .orElseThrow(()-> new BaseException(NOT_FIND_FEED));
 
         List<Comment> commentList = commentRepository.findAllByFeedId(feed.getId());
+
         for(Comment comment: commentList) {
             comment.deleteComment();
         }

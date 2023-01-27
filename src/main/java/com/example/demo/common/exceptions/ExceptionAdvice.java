@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import javax.validation.UnexpectedTypeException;
+
 
 @Slf4j
 @RestControllerAdvice
@@ -37,13 +39,13 @@ public class ExceptionAdvice {
     }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public BaseResponse<BaseResponseStatus> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException exception) {
-        log.error("Type Mismatch Exception. ");
+        log.error("Type Mismatch Exception.");
         return new BaseResponse<>(BaseResponseStatus.TYPE_MISMATCH_ERROR);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public BaseResponse<BaseResponseStatus> handleHttpMessageNotReadableException(HttpMessageNotReadableException exception) {
-        log.error("Json Parse Error ");
+        log.error("Json Parse Error.");
         return new BaseResponse<>(BaseResponseStatus.JSON_PARSE_ERROR);
     }
 }

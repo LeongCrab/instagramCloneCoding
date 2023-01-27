@@ -2,6 +2,7 @@ package com.example.demo.src.user.model;
 
 import com.example.demo.common.Constant.LoginType;
 import com.example.demo.src.user.entity.User;
+import com.example.demo.utils.ValidEnum;
 import lombok.*;
 
 import javax.validation.constraints.*;
@@ -35,8 +36,8 @@ public class PostUserReq {
 
     //가입 시 자동으로 개인 정보 만료 날짜 1년 추가
     private LocalDate privacyExpiredAt = LocalDate.now().plusYears(1);
-
-    protected LoginType loginType;
+    @ValidEnum(enumClass = LoginType.class)
+    private LoginType loginType;
 
     public User toEntity() {
         return User.builder()

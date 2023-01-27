@@ -41,6 +41,7 @@ public enum BaseResponseStatus {
     BANNED_USER(false,HttpStatus.BAD_REQUEST.value(), "정지된 계정입니다"),
     DELETED_USER(false,HttpStatus.BAD_REQUEST.value(), "탈퇴한 계정입니다"),
     INVALID_OAUTH_TYPE(false, HttpStatus.BAD_REQUEST.value(), "알 수 없는 소셜 로그인 형식입니다."),
+    INVALID_TYPE(false, HttpStatus.BAD_REQUEST.value(), "자체 로그인 유저만 가능합니다."),
 
 
 
@@ -66,7 +67,7 @@ public enum BaseResponseStatus {
     private final int code;
     private final String message;
 
-    private BaseResponseStatus(boolean isSuccess, int code, String message) {
+    BaseResponseStatus(boolean isSuccess, int code, String message) {
         this.isSuccess = isSuccess;
         this.code = code;
         this.message = message;

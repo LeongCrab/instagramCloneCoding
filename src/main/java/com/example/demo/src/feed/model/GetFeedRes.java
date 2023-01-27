@@ -24,23 +24,23 @@ public class GetFeedRes {
     private String content;
     private Boolean hasImage;
     private Boolean hasVideo;
-    private Integer numberOfFiles;
+    private Integer numberOfContents;
     private Integer hearts;
     private Integer comments;
     private List<String> imageList;
     private List<String> videoList;
 
-    public GetFeedRes(Feed feed, int hearts, int comments) {
+    public GetFeedRes(Feed feed, int hearts) {
         this.id = feed.getId();
         this.userId = feed.getUser().getId();
         this.createdAt = feed.getCreatedAt().toString();
         this.updatedAt = feed.getUpdatedAt().toString();
         this.content = feed.getContent();
-        this.hasImage = feed.getHasImage();
-        this.hasVideo = feed.getHasVideo();
-        this.numberOfFiles = feed.getNumberOfFiles();
+        this.hasImage = !feed.getImageList().isEmpty();
+        this.hasVideo = !feed.getVideoList().isEmpty();
+        this.numberOfContents = feed.getImageList().size() + feed.getVideoList().size();
         this.hearts = hearts;
-        this.comments = comments;
+        this.comments = feed.getCommentList().size();
         this.imageList = makeImageList(feed.getImageList());
         this.videoList = makeVideoList(feed.getVideoList());
     }
