@@ -44,8 +44,12 @@ public class JwtService {
     @return String
      */
     public String getJwt(){
-        HttpServletRequest request = ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
-        return request.getHeader("Authorization").split(" ")[1];
+        try {
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            return request.getHeader("Authorization").split(" ")[1];
+        } catch (Exception exception) {
+            throw new BaseException(EMPTY_JWT);
+        }
     }
 
     /*
@@ -56,9 +60,6 @@ public class JwtService {
     public Long getId() throws BaseException{
         //1. JWT 추출
         String accessToken = getJwt();
-        if(accessToken == null || accessToken.length() == 0){
-            throw new BaseException(EMPTY_JWT);
-        }
 
         // 2. JWT parsing
         Jws<Claims> claims;

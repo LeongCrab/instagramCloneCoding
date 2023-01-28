@@ -18,7 +18,7 @@ public class Constant {
     }
 
     public enum LoginType {
-        ORIGINAL, GOOGLE, KAKAO, NAVER, APPLE
+        ORIGINAL, KAKAO, GOOGLE, NAVER, APPLE
     }
 
     public enum ReportReason {

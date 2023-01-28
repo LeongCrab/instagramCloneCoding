@@ -13,7 +13,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PatchUserReq {
-    @NotBlank(message= "Insert password")
-    @Size(min=6, max=20, message = "[password] 6 ~ 20 characters")
+    @NotBlank(message= "변경할 비밀번호를 입력하세요")
+    @Size(min=6, max=20, message = "비밀번호는 6~20자로 입력해주세요")
     private String password;
 }

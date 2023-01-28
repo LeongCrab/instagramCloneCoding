@@ -2,6 +2,8 @@ package com.example.demo.src.feed;
 
 
 import com.example.demo.utils.JwtService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import com.example.demo.common.response.BaseResponse;
 import com.example.demo.src.feed.model.*;
@@ -11,7 +13,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 
-
+@Tag(name= "feed 도메인", description = "게시글 관련 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/app/feeds")
@@ -25,6 +27,7 @@ public class FeedController {
      * [POST] /app/feeds
      * @return BaseResponse<PostFeedRes>
      */
+    @Operation(summary = "게시글 작성", description = "게시글을 작성한다.")
     @ResponseBody
     @PostMapping("")
     public BaseResponse<PostFeedRes> createFeed(@Valid @RequestBody PostFeedReq postFeedReq) {
@@ -40,6 +43,7 @@ public class FeedController {
      * [GET] /app/feeds?size=&pageIndex=&userId=
      * @return BaseResponse<List<GetFeedRes>>
      */
+    @Operation(summary = "게시글 조회", description = "게시글을 조회한다. 작성자 기준으로 조회도 가능하다.")
     @ResponseBody
     @GetMapping("")
     public BaseResponse<List<GetFeedRes>> getFeeds(
@@ -60,6 +64,7 @@ public class FeedController {
      * [PATCH] /app/feeds/:feedId
      * @return BaseResponse<String>
      */
+    @Operation(summary = "게시글 수정", description = "게시글 내용을 수정한다.")
     @ResponseBody
     @PatchMapping("/{feedId}")
     public BaseResponse<String> modifyFeed(@PathVariable("feedId") Long feedId, @Valid @RequestBody PatchFeedReq patchFeedReq){
@@ -76,6 +81,7 @@ public class FeedController {
      * [PATCH] /app/feeds/:feedId/delete
      * @return BaseResponse<String>
      */
+    @Operation(summary = "게시글 삭제", description = "게시글을 삭제한다.")
     @ResponseBody
     @PatchMapping("/{feedId}/delete")
     public BaseResponse<String> deleteFeed(@PathVariable("feedId") long feedId){
@@ -92,6 +98,7 @@ public class FeedController {
      * [POST] /app/feeds/:feedId/heart
      * @return BaseResponse<String>
      */
+    @Operation(summary = "게시글 좋아요", description = "게시글을 좋아요를 하거나 해지한다.")
     @ResponseBody
     @PostMapping("/{feedId}/heart")
     public BaseResponse<String> heart(@PathVariable("feedId") long feedId) {
@@ -115,6 +122,7 @@ public class FeedController {
      * [POST] /app/feeds/:feedId/comment
      * @return BaseResponse<String>
      */
+    @Operation(summary = "댓글 작성", description = "게시글에 댓글을 작성한다.")
     @ResponseBody
     @PostMapping("/{feedId}/comment")
     public BaseResponse<String> createComment(@PathVariable("feedId") long feedId, @RequestBody PostCommentReq postCommentReq) {
@@ -129,6 +137,7 @@ public class FeedController {
      * [GET] /app/feeds/:feedId/comment
      * @return BaseResponse<String>
      */
+    @Operation(summary = "댓글 조회", description = "게시글에 댓글을 모두 조회한다.")
     @ResponseBody
     @GetMapping("/{feedId}/comments")
     public BaseResponse<List<GetCommentRes>> getComment(@PathVariable("feedId") long feedId) {
@@ -142,6 +151,7 @@ public class FeedController {
      * [PATCH] /app/feeds/:feedId/comment/:commentId
      * @return BaseResponse<String>
      */
+    @Operation(summary = "댓글 수정", description = "댓글을 수정한다.")
     @ResponseBody
     @PatchMapping("/{feedId}/comment/{commentId}")
     public BaseResponse<String> patchComment(@PathVariable("commentId") long commentId, @RequestBody PostCommentReq postCommentReq) {
@@ -156,6 +166,7 @@ public class FeedController {
      * [PATCH] /app/feeds/:feedId/comment/:commentId/delete
      * @return BaseResponse<String>
      */
+    @Operation(summary = "댓글 삭제", description = "댓글을 삭제한다.")
     @ResponseBody
     @PatchMapping("/{feedId}/comment/{commentId}/delete")
     public BaseResponse<String> deleteComment(@PathVariable("commentId") long commentId) {
@@ -170,6 +181,7 @@ public class FeedController {
      * [POST] /app/feeds/:feedId/report
      * @return BaseResponse<String>
      */
+    @Operation(summary = "게시글 신고", description = "게시글을 신고한다.")
     @ResponseBody
     @PostMapping("/{feedId}/report")
     public BaseResponse<String> createFeedReport(@PathVariable("feedId") long feedId, @RequestBody PostReportReq postReportReq) {
@@ -183,6 +195,7 @@ public class FeedController {
      * [POST] /app/feeds/comment/:commentId/report
      * @return BaseResponse<String>
      */
+    @Operation(summary = "댓글 신고", description = "댓글을 신고한다.")
     @ResponseBody
     @PostMapping("/comment/{commentId}/report")
     public BaseResponse<String> createCommentReport(@PathVariable("commentId") long commentId, @RequestBody PostReportReq postReportReq) {

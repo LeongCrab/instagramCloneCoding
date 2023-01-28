@@ -28,10 +28,10 @@ public class PostUserReq {
     @Size(min=6, max=20, message = "비밀번호는 6~20자 입력 가능합니다.")
     private String password;
     @NotBlank(message = "생일을 입력하세요")
-    @Pattern(regexp = "(0[1-9]|1[012])-([012][0-9]|3[01])", message= "생일 형식은 'MM-DD'입니다")
+    @Pattern(regexp = "^(0[1-9]|1[012])-([012][0-9]|3[01])$", message= "생일 형식은 'MM-DD'입니다")
     private String birthday;
 
-    @Size(min=4, max=4, message = "해는 4자리로 입력해주세요.")
+    @Pattern(regexp = "^(19|20)\\d{2}$", message = "생년은 4자리 숫자를 입력해주세요")
     private String birthYear;
 
     //가입 시 자동으로 개인 정보 만료 날짜 1년 추가

@@ -4,12 +4,15 @@ package com.example.demo.src.admin;
 import com.example.demo.common.response.BaseResponse;
 import com.example.demo.src.admin.model.*;
 import com.example.demo.src.history.model.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
+@Tag(name= "admin 도메인", description = "admin 페이지 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/admin")
@@ -24,6 +27,7 @@ public class AdminController {
      *
      * @return BaseResponse<List<GetUserRes>>
      */
+    @Operation(summary = "회원 목록 조회", description = "회원 목록을 조회한다.")
     @ResponseBody
     @GetMapping("/users")
     public BaseResponse<List<GetUserRes>> getUsers(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetUserReq getUserReq) {
@@ -39,6 +43,7 @@ public class AdminController {
      *
      * @return BaseResponse<GetUserInfoRes>
      */
+    @Operation(summary = "회원 상세 조회", description = "회원 상세 정보를 조회한다.")
     @ResponseBody
     @GetMapping("/users/{userId}")
     public BaseResponse<GetUserInfoRes> getUser(@PathVariable("userId") Long userId) {
@@ -54,6 +59,7 @@ public class AdminController {
      *
      * @return BaseResponse<String>
      */
+    @Operation(summary = "회원 정지", description = "회원 상태를 정지 상태로 바꾼다.")
     @ResponseBody
     @PatchMapping("/users/{userId}/ban")
     public BaseResponse<String> banUser(@PathVariable("userId") Long userId) {
@@ -68,6 +74,7 @@ public class AdminController {
      *
      * @return BaseResponse<List<GetFeedRes>>
      */
+    @Operation(summary = "게시글 목록 조회", description = "게시글 목록을 조회한다.")
     @ResponseBody
     @GetMapping("/feeds")
     public BaseResponse<List<GetFeedRes>> getFeeds(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetFeedReq getFeedReq) {
@@ -82,6 +89,7 @@ public class AdminController {
      *
      * @return BaseResponse<GetFeedInfoRes>
      */
+    @Operation(summary = "게시글 상세 조회", description = "게시글 상세 정보를 조회한다.")
     @ResponseBody
     @GetMapping("/feeds/{feedId}")
     public BaseResponse<GetFeedInfoRes> getFeed(@PathVariable("feedId") Long feedId) {
@@ -96,6 +104,7 @@ public class AdminController {
      *
      * @return BaseResponse<String>
      */
+    @Operation(summary = "게시글 삭제", description = "게시글을 삭제하고 달린 댓글도 전부 비활성화한다.")
     @ResponseBody
     @PatchMapping("/feeds/{feedId}/ban")
     public BaseResponse<String> banFeed(@PathVariable("feedId") Long feedId) {
@@ -110,6 +119,7 @@ public class AdminController {
      *
      * @return BaseResponse<List<GetReportRes>>
      */
+    @Operation(summary = "신고 목록 조회", description = "신고 목록을 조회한다.")
     @ResponseBody
     @GetMapping("/reports")
     public BaseResponse<List<GetReportRes>> getReports(@RequestParam int pageIndex) {
@@ -124,6 +134,7 @@ public class AdminController {
      *
      * @return BaseResponse<String>
      */
+    @Operation(summary = "신고 삭제", description = "신고를 삭제한다.")
     @ResponseBody
     @PatchMapping("/reports/{reportId}/delete")
     public BaseResponse<String> deleteReports(@PathVariable("reportId") Long reportId) {
@@ -138,6 +149,7 @@ public class AdminController {
      *
      * @return BaseResponse<List<GetUserHistoryRes>>
      */
+    @Operation(summary = "회원 히스토리 조회", description = "회원 정보 변경 내역을 조회한다.")
     @ResponseBody
     @GetMapping("/history/users")
     public BaseResponse<List<GetUserHistoryRes>> getUserHistory(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetHistoryReq getHistoryReq) {
@@ -152,6 +164,7 @@ public class AdminController {
      *
      * @return BaseResponse<List<GetFeedHistoryRes>>
      */
+    @Operation(summary = "게시글 히스토리 조회", description = "게시글 정보 변경 내역을 조회한다.")
     @ResponseBody
     @GetMapping("/history/feeds")
     public BaseResponse<List<GetFeedHistoryRes>> getFeedHistory(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetHistoryReq getHistoryReq) {
@@ -166,6 +179,7 @@ public class AdminController {
      *
      * @return BaseResponse<List<GetCommentHistoryRes>>
      */
+    @Operation(summary = "댓글 히스토리 조회", description = "댓글 정보 변경 내역을 조회한다.")
     @ResponseBody
     @GetMapping("/history/comments")
     public BaseResponse<List<GetCommentHistoryRes>> getCommentHistory(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetHistoryReq getHistoryReq) {
@@ -180,6 +194,7 @@ public class AdminController {
      *
      * @return BaseResponse<List<GetReportRes>>
      */
+    @Operation(summary = "신고 히스토리 조회", description = "신고 내역을 조회한다.")
     @ResponseBody
     @GetMapping("/history/reports")
     public BaseResponse<List<GetReportHistoryRes>> getReports(@RequestParam int pageIndex, @Valid @RequestBody(required = false) GetHistoryReq getHistoryReq) {

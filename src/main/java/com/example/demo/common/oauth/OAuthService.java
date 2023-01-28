@@ -22,7 +22,6 @@ import static com.example.demo.common.response.BaseResponseStatus.NOT_FIND_USER;
 @Service
 @RequiredArgsConstructor
 public class OAuthService {
-    private final GoogleOauth googleOauth;
     private final KakaoOauth kakaoOauth;
     private final HttpServletResponse response;
     private final UserService userService;
@@ -32,9 +31,6 @@ public class OAuthService {
     public void accessRequest(Constant.LoginType loginType) throws IOException {
         String redirectURL;
         switch (loginType){
-            case GOOGLE:
-                redirectURL= googleOauth.getOauthRedirectURL();
-                break;
             case KAKAO:
                 redirectURL= kakaoOauth.getOauthRedirectURL();
                 break;
@@ -49,23 +45,6 @@ public class OAuthService {
     public GetSocialOAuthRes oAuthLoginOrJoin(Constant.LoginType loginType, String code) throws IOException {
 
         switch (loginType) {
-            case GOOGLE: {
-                ResponseEntity<String> accessTokenResponse = googleOauth.requestAccessToken(code);
-                GoogleOAuthToken oAuthToken = googleOauth.getAccessToken(accessTokenResponse);
-
-                ResponseEntity<String> userInfoResponse = googleOauth.requestUserInfo(oAuthToken);
-                GoogleUser googleUser = googleOauth.getUserInfo(userInfoResponse);
-
-                if(userService.checkUserByLoginId(googleUser.getEmail())) {
-                    GetUserRes getUserRes = userService.getUserByLoginId(googleUser.getEmail());
-                    String jwtToken = jwtService.createJwt(getUserRes.getId());
-
-                    return new GetSocialOAuthRes(jwtToken, getUserRes.getId(), oAuthToken.getAccess_token(), oAuthToken.getToken_type());
-                } else {
-                    PostUserRes postUserRes = userService.createOAuthUser(googleUser.toEntity());
-                    return new GetSocialOAuthRes(postUserRes.getJwt(), postUserRes.getId(), oAuthToken.getAccess_token(), oAuthToken.getToken_type());
-                }
-            }
             case KAKAO:{
                 ResponseEntity<String> accessTokenResponse = kakaoOauth.requestAccessToken(code);
                 KakaoOAuthToken oAuthToken = kakaoOauth.getAccessToken(accessTokenResponse);

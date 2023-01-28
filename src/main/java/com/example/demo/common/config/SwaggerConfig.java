@@ -1,28 +1,39 @@
 package com.example.demo.common.config;
 
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
-
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@OpenAPIDefinition(
-        info = @Info(title = "demo 서비스 API 명세서",
-                description = "스프링부트 demo 서비스 CRUD 실습 API 명세서",
-                version = "v1"))
+
 @RequiredArgsConstructor
 @Configuration
-public class SwaggerConfig {
-
+public class SwaggerConfig{
     @Bean
-    public GroupedOpenApi chatOpenApi() {
-        String[] paths = {"/**"};
+    public OpenAPI openAPI() {
 
-        return GroupedOpenApi.builder()
-                .group("demo 서비스 API v1")
-                .pathsToMatch(paths)
-                .build();
+        Info info = new Info()
+                .version("v1.0.0")
+                .title("Gridge-Test API 명세서")
+                .description("by 렁게");
+
+        String jwtSchemeName = "jwtAuth";
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+        Components components = new Components()
+                .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
+                        .name(jwtSchemeName)
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT"));
+
+        return new OpenAPI()
+                .info(info)
+                .addSecurityItem(securityRequirement)
+                .components(components);
     }
 }
