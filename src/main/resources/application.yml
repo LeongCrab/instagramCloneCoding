@@ -20,16 +20,10 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver # mysql 8버전
     # driver-class-name: com.mysql.jdbc.Driver # mysql 5버전
   OAuth2:
-    google:
-      url: https://accounts.google.com/o/oauth2/v2/auth
-      client-id: # client-id
-      client-secret:  # client-secret
-      callback-login-url: http://localhost:9000/app/users/auth/google/login/callback # 등록한 정보에 맞게 수정해주세요
-      scope: https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile # 등록한 정보에 맞게 수정해주세요
     kakao:
       url: https://kauth.kakao.com/oauth/authorize
       rest-api-key: 44a90896f3ee78d0e03712d6cd025cfd
-      redirect-uri: http://localhost:9000/app/users/kakao/login/callback
+      redirect-uri: https://leongcrab.shop:9000/app/users/kakao/login/callback
 
 spring.sql.init.platform: mysql
 server:
@@ -51,7 +45,7 @@ springdoc:
     - /**
 
 jwt:
-  secret-key: UwKYibQQgkW7g-*k.ap9kje-wxBHb9wdXoBT4vnt4P3sJWt-Nu # JWT key. 수정해주세요
+  secret-key: UwKYibQQgkW7g-*k.ap9kje-wxBHb9wdXoBT4vnt4P3sJWt-Nu # JWT key.
 
 AES128:
   secret-key: abcdefghijklmnop
@@ -64,7 +58,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
-      ddl-auto: none
+      ddl-auto: update
       # create, update, create-drop, none 등의 옵션이 있습니다.
       # create: 기존테이블 삭제 후 다시 생성
       # update: 변경된 부분만 반영

@@ -1,14 +1,11 @@
-# SpringBoot Template
-본 템플릿은 소프트스퀘어드 서버 교육용 Spring Boot 템플릿 입니다.
+# ERD
+![erd.png](..%2Ferd.png)
 
 ## ✨Common
-### REST API
-REST API를 처리하는 SpringBoot 프로젝트   
-동작하는 기본 구성 원리를 반드시 숙지하자.
 
 ### Folder Structure
 - `src`: 메인 로직
-  `src`에는 도메인 별로 패키지를 구성하도록 했다. **도메인**이란 회원(User), 게시글(Post), 댓글(Comment), 주문(Order) 등 소프트웨어에 대한 요구사항 혹은 문제 영역이라고 생각하면 된다. 각자 설계할 APP을 분석하고 필요한 도메인을 도출하여 `src` 폴더를 구성하자.
+  `src`에는 도메인 별로 패키지를 구성하도록 했다. 
 - `common`: 메인 로직은 아니지만 `src` 에서 필요한 부차적인 파일들을 모아놓은 폴더
   - `config`: 설정 파일 관련 폴더
   - `entity`: 공통 Entity 관리 폴더
@@ -66,22 +63,24 @@ api-server-spring-boot
         | BaseException.java // Controller, Service에서 Response 용으로 공통적으로 사용 될 익셉션 클래스
         | ExceptionAdvice.java // ExceptionHandler를 활용하여 정의해놓은 예외처리를 통합 관리하는 클래스
       > oauth
-        | GoogleOauth.java // Google OAuth 처리 클래스
         | KakaoOauth.java // Kakao OAuth 처리 클래스
         | OAuthService.java // OAuth 공통 처리 서비스 클래스
-        | SocialOauth.java // OAuth 공통 메소드 정의 인터페이스
+        | SocialOauth.java // OAuth 공통 메소드 정의 인터페이스 
       > response
         | BaseResponse.java // Controller 에서 Response 용으로 공통적으로 사용되는 구조를 위한 모델 클래스
         | BaseResponseStatus.java // Controller, Service에서 사용할 Response Status 관리 클래스 
-      | Constant // 상수 보관 클래스
+      | Constant // 상수 보관 클래스, enum 타입을 보관한다.
     > src
       > user
         > entity
           | User.java // User Entity
+          | Chat.java // Chat Entity
+          | Follow.java // Follow Entity
         > model
           | GetSocialOAuthRes.java // OAuth 인증 관련 DTO(토튼 정보)
           | GetUserRes.java    
-          | GoogleUser.java // OAuth 인증 관련 DTO(유저 정보)
+          | KakaoOAuthToken.java //  //클라이언트로 보낼 jwt Token, access Token 등이 담긴 객체
+          | KakaoUser.java // OAuth 인증 관련 DTO(유저 정보)
           | PatchUserReq.java
           | PostLoginReq.java
           | PostLoginRes.java 
@@ -90,6 +89,9 @@ api-server-spring-boot
         | UserController.java
         | UserService.java
         | UserRepository.java
+      > feed // 게시글
+      > admin // 어드민 페이지
+      > history // 히스토리
     > utils
       | JwtService.java // JWT 관련 클래스
       | AES128.java // 암호화 알고리즘 클래스

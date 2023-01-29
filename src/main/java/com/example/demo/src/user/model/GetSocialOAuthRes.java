@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-//클라이언트로 보낼 jwtToken, accessToken등이 담긴 객체
+
 @Getter
 @Setter
 @NoArgsConstructor

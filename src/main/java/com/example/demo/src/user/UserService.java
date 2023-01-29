@@ -94,14 +94,14 @@ public class UserService {
     }
 
     public PostUserRes createOAuthUser(User user) {
-        //이름 암호화
+
         String encryptName;
         try {
             encryptName = aes128.encrypt(user.getName());
         } catch (Exception exception) {
             throw new BaseException(NAME_ENCRYPTION_ERROR);
         }
-        //생일 암호화
+
         String encryptBirthday;
         try {
             encryptBirthday = aes128.encrypt(user.getBirthday());
@@ -109,7 +109,6 @@ public class UserService {
             throw new BaseException(BIRTHDAY_ENCRYPTION_ERROR);
         }
 
-        //유저 엔티티 암호화
         user.encryptOAuthUser(encryptName, encryptBirthday);
 
         userRepository.save(user);
